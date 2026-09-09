@@ -1,11 +1,18 @@
 export type DraftStatus = "draft" | "in_review" | "approved" | "ready_to_publish" | "published" | "cancelled";
 
+export interface AssetByteDigest {
+  path: string;
+  sha256: string;
+  byteLength: number;
+}
+
 export interface ContentDraft {
   id: string;
   title: string;
   body: string;
   topics: string[];
   assetPaths: string[];
+  assetDigests?: AssetByteDigest[];
   campaign?: string;
   scheduledAt?: string;
   status: DraftStatus;
