@@ -1,20 +1,21 @@
 # Development status
 
-This repository is a local workflow prototype, not yet a complete Xiaohongshu integration.
+Honest product truth: official Xiaohongshu **openaccount** docs expose OAuth, device grant for web, token refresh, and basic profile (`min_user_info`). They do **not** document a general third-party note-publishing API. This project's safe ops path remains: AI prepares drafts → human hash-bound approval → human publishes in the official client → record publication/metrics locally.
 
-Fixed in the current MCP workflow:
+## Shippable now (0.3.0)
 
-- Draft operations include save, list, get, update, cancel, review, hash-bound approval, publish-package handoff, and local metric recording.
-- `contentHash` includes SHA-256 of asset file bytes when the paths exist on disk. Missing, non-file, or unreadable paths fail closed. The server does not substitute path strings or invented bytes.
-- `safety_status`, `approve_draft`, and draft tool responses state that the approval phrase does not authenticate a human. A model can still call `approve_draft`. This is an explicit limitation, not a solved authorization boundary.
+- Local MCP draft workflow (13 core tools): check, save, get, update, cancel, review, hash-bound approval, publish-package handoff, local publication/metric records. `contentHash` includes asset file bytes and fails closed on missing files.
+- Installable Grok Bot / Cursor plugin layout: root `plugin.json` (Agent Plugins 1.0), `.cursor-plugin/plugin.json`, `mcp.json` (local `node dist/cli.js`), operator `skills/`, and a Cursor safety rule. Secrets stay out of plugin files.
+- Operator docs: [docs/use-with-grokbot.md](docs/use-with-grokbot.md) (Chinese + English), `npm run doctor`, `npm run grokbot:pack`, [docs/RELEASE.md](docs/RELEASE.md).
+- Optional official openaccount OAuth **scaffold**, disabled by default. When explicitly enabled with `app_id` / `app_secret`, MCP exposes `start_device_auth`, `poll_device_auth`, `get_connected_profile`, `disconnect_official_oauth`. Tokens are never returned in tool results. This is **not** publish capability.
+- CI via `npm run check`. Listing copy lives in `grokbot/` for manual paste.
 
-Still true / remaining:
+## Still blocked / external
 
-- No Xiaohongshu account connection, live data access, or publishing adapter is implemented.
-- The GrokBot platform and marketplace import format have not yet been verified. Public Grok Bot docs describe creating a Bot and connecting MCP in the product UI; they do not document an official listing-import schema that this repository can claim. The grokbot directory remains draft listing materials only.
-- GrokBot listing drafts were refreshed to listing version `0.2.0` so they match the current 13 MCP tools, file-byte hashing, and the approval-phrase limitation. Refreshing copy is not a marketplace-format verification.
-- The approval phrase plus content hash only bind a review to exact content. They do not prove a human clicked. Do not add a weaker fake gate and treat it as human authentication.
-- HTTP deployment is single-user/single-process. Internet-facing or multi-user production deployment needs further hardening.
-- GitHub marketplace submission is pending.
+- **No auto-publish.** There is no unofficial cookie/private-API publisher, and the official OAuth scaffold does not send notes.
+- **Marketplace review is external.** A maintainer must submit the public repo at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish). This repository does not invent an official one-click GrokBot import schema. `grokbot/manifest.json` remains a project-internal snapshot (`rednote-ops.grokbot-listing/v1`).
+- The approval phrase plus `contentHash` only bind a review to exact content. They do not prove a human clicked. A model can still call `approve_draft`.
+- HTTP deployment is single-user/single-process. Internet-facing or multi-user production still needs HTTPS, standard OAuth for the MCP itself, tenant isolation, and stronger storage.
+- Registering a Xiaohongshu openaccount app, passing platform review, and obtaining any future official publish scope are the user's responsibility. OAuth ≠ publish permission.
 
-See this status before relying on any broader claims in the initial README or listing drafts.
+See this status before relying on README or listing copy.

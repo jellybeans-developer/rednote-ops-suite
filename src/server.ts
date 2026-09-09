@@ -4,8 +4,24 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import type { AppConfig } from "./config.js";
 import { AssetAccessError, checkContent, contentHash, contentHashForAssetPaths, inspectAssetFiles, normalizeTopics } from "./content.js";
+import {
+  CORE_MCP_TOOL_NAMES,
+  OFFICIAL_OPENACCOUNT_OAUTH_TOOL_NAMES,
+  PACKAGE_VERSION,
+} from "./mcp-tool-names.js";
+import {
+  createOfficialOpenAccountFetchClient,
+  OfficialOpenAccountOAuthAdapter,
+  type OfficialOpenAccountHttpClient,
+} from "./openaccount/oauth-adapter.js";
+import { registerOfficialOpenAccountOauthTools } from "./openaccount/mcp-tools.js";
+import { OfficialOauthTokenStore } from "./openaccount/token-store.js";
 import { JsonStore } from "./store.js";
 import type { ContentDraft, DraftStatus, MetricSnapshot } from "./types.js";
+
+export interface CreateRedNoteServerOptions {
+  openAccountHttpClient?: OfficialOpenAccountHttpClient;
+}
 
 const APPROVAL_PHRASE = "I_APPROVE_PUBLICATION";
 const APPROVAL_HUMAN_AUTH_LIMITATION =
@@ -43,11 +59,14 @@ function assertWritable(config: AppConfig): void {
   if (config.readOnly) throw new Error("Server is running in read-only mode");
 }
 
-export async function createRedNoteServer(config: AppConfig): Promise<McpServer> {
+export async function createRedNoteServer(
+  config: AppConfig,
+  options: CreateRedNoteServerOptions = {},
+): Promise<McpServer> {
   const store = new JsonStore(config.dataDir);
   await store.init();
 
-  const server = new McpServer({ name: "rednote-ops", version: "0.1.0" });
+  const server = new McpServer({ name: "rednote-ops", version: PACKAGE_VERSION });
 
   server.registerTool(
     "safety_status",
@@ -61,19 +80,32 @@ export async function createRedNoteServer(config: AppConfig): Promise<McpServer>
       mode: config.readOnly ? "read_only" : "read_write",
       dataDirectory: config.dataDir,
       capabilities: ["内容草稿", "内容检查", "草稿读取/更新/取消", "排期", "人工审批（非身份认证）", "发布交接包", "手工指标记录"],
+      coreToolNames: CORE_MCP_TOOL_NAMES,
       boundaries: [
         "不收集或存储小红书 Cookie、密码、短信验证码",
         "不逆向私有接口、不绕过验证码或平台风控",
         "不静默发布；每条内容都要求显式批准后，由人在官方客户端完成发布",
         "当前开源版本不声称拥有小红书自动发布官方 API 权限",
+        "官方 openaccount 文档公开的是 OAuth 与 min_user_info 等账号能力，不是通用第三方发笔记 API",
         APPROVAL_HUMAN_AUTH_LIMITATION,
       ],
       limitations: {
         approvalAuthenticatesHuman: false,
         liveXiaohongshuConnection: false,
         unofficialPublishingAdapter: false,
+        officialOpenAccountOAuthEnabled: config.openAccountOAuth.enabled,
+        officialOpenAccountOAuthPublishesNotes: false,
         assetHashIncludesFileBytes: true,
         missingAssetsFailClosed: true,
+      },
+      officialOpenAccountOAuth: {
+        enabled: config.openAccountOAuth.enabled,
+        toolsExposed: config.openAccountOAuth.enabled,
+        toolNamesWhenEnabled: OFFICIAL_OPENACCOUNT_OAUTH_TOOL_NAMES,
+        documentedOfficialCapabilities: ["device grant", "token refresh", "min_user_info"],
+        publishesNotes: false,
+        registeringOfficialAppIsUserResponsibility: true,
+        oauthIsNotPublishPermission: true,
       },
       approval: {
         phrase: APPROVAL_PHRASE,
@@ -455,6 +487,15 @@ export async function createRedNoteServer(config: AppConfig): Promise<McpServer>
       return textResult({ drafts: db.drafts.length, byStatus, metricSnapshots: db.metrics.length, latestMetrics: db.metrics.slice(-10).reverse() });
     },
   );
+
+  if (config.openAccountOAuth.enabled) {
+    const adapter = new OfficialOpenAccountOAuthAdapter(
+      config.openAccountOAuth,
+      new OfficialOauthTokenStore(config.dataDir),
+      options.openAccountHttpClient ?? createOfficialOpenAccountFetchClient(config.openAccountOAuth.baseUrl),
+    );
+    registerOfficialOpenAccountOauthTools(server, adapter, store);
+  }
 
   return server;
 }

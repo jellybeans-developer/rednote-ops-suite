@@ -1,7 +1,7 @@
 {
   "name": "rednote-ops-suite",
-  "version": "0.1.0",
-  "description": "Safety-first MCP server and Grok Bot package for Xiaohongshu/RedNote content operations.",
+  "version": "0.3.0",
+  "description": "Safety-first MCP server and Grok Bot / Cursor plugin for Xiaohongshu/RedNote content operations.",
   "type": "module",
   "bin": {
     "rednote-ops-mcp": "dist/cli.js"
@@ -9,6 +9,12 @@
   "files": [
     "dist",
     "grokbot",
+    "plugin.json",
+    "mcp.json",
+    ".cursor-plugin",
+    "skills",
+    "rules",
+    "docs",
     "README.md",
     "README.zh-CN.md",
     "LICENSE"
@@ -21,7 +27,9 @@
     "test:watch": "vitest",
     "check": "npm run build && npm test",
     "inspect": "npx @modelcontextprotocol/inspector node dist/cli.js",
-    "grokbot:pack": "node scripts/pack-grokbot-listing.mjs"
+    "grokbot:pack": "node scripts/pack-grokbot-listing.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "release:check": "node scripts/release-checklist.mjs"
   },
   "keywords": [
     "mcp",

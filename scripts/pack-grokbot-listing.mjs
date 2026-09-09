@@ -28,6 +28,7 @@ const packagingNote = [
   "",
   "This zip is a reviewer/archive bundle of draft marketplace copy.",
   "It is NOT a verified or official GrokBot marketplace import package.",
+  "Maintainer submit path: https://cursor.com/marketplace/publish (public review).",
   "Copy fields into the GrokBot create UI as described in PUBLISHING.md.",
   "",
   `MCP tools (${manifest.mcp.toolCount}): ${manifest.mcp.requiredTools.join(", ")}`,

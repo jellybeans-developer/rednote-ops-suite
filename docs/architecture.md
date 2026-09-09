@@ -9,18 +9,24 @@ RedNote Ops MCP
   ├─ draft and schedule workflow (get / update / cancel)
   ├─ hash-bound approval gate (does not authenticate a human)
   ├─ publication handoff package
-  └─ manual metrics and summaries
+  ├─ manual metrics and summaries
+  └─ optional official openaccount OAuth (disabled by default; device grant / min_user_info only)
       │
       ▼
 Local JSON data + metadata-only JSONL audit
+(+ openaccount-oauth.json when OAuth is enabled; never logged)
 
 Human reviewer ──► official Xiaohongshu client
-                 or separately approved official adapter
+                 (no cookie/private-API publisher in this repo)
 ```
 
 The trust boundary is intentionally before publication. The MCP server can prepare a publication package only after `approve_draft` is called with the exact SHA-256 hash. That call does not prove a human made it. The server cannot turn the package into an undocumented Xiaohongshu request.
 
+Installable Agent Plugin / Cursor plugin files live at the repository root (`plugin.json`, `.cursor-plugin/plugin.json`, `mcp.json`, `skills/`). They launch `node dist/cli.js` and must not contain secrets.
+
 ## Adapter policy
+
+This repository ships one gated official adapter: Xiaohongshu **openaccount** OAuth (device grant, token refresh, `min_user_info`). It is disabled by default, requires env-provided `app_id` / `app_secret`, never logs tokens, and does not publish notes. Official openaccount documentation does not describe a general third-party note-publishing API. OAuth is not publish permission. Registering an official app is the deployer's responsibility.
 
 Future publication or analytics adapters must:
 

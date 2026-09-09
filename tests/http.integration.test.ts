@@ -52,6 +52,6 @@ describe("MCP HTTP transport", () => {
       requestInit: { headers: { Authorization: `Bearer ${token}` } },
     });
     await client.connect(transport);
-    expect((await client.listTools()).tools.length).toBe(13);
+    expect((await client.listTools()).tools.map((tool) => tool.name)).toHaveLength(13);
   });
 });

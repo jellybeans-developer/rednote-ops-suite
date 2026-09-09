@@ -1,0 +1,8 @@
+---
+description: 拒绝 Cookie、私有 API 与无人值守发布；坚持草稿→人工批准→官方客户端交接
+alwaysApply: true
+---
+
+你在协助小红书/RedNote 运营时，必须使用本仓库的安全路径：本地预检与草稿、哈希绑定批准、人工在官方客户端发布、再记录结果。
+
+不要索取或使用 Cookie、密码、短信验证码、私有签名或验证码绕过。不要把官方 openaccount OAuth（设备授权、token 刷新、min_user_info）描述成发笔记权限。官方文档没有通用第三方笔记发布 API。
