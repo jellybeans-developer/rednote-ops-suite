@@ -15,7 +15,7 @@ grok mcp add --scope project rednote_ops -- node dist/cli.js
 grok mcp doctor rednote_ops
 ```
 
-The server includes content checks, draft storage, scheduling, hash-bound human approval, publication handoff packages, a local audit trail, and manual metric snapshots. It supports local stdio and authenticated Streamable HTTP.
+The server includes content checks, draft storage (including get/update/cancel), scheduling, a hash-bound approval step that does not authenticate a human, publication handoff packages, a local audit trail, and manual metric snapshots. Content hashes include asset file bytes when those files exist on disk. It supports local stdio and authenticated Streamable HTTP.
 
 Chinese documentation: [README.zh-CN.md](README.zh-CN.md)  
 GrokBot package: [grokbot/README.md](grokbot/README.md)  

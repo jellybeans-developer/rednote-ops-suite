@@ -10,7 +10,7 @@ Please do not open a public issue for credential exposure, authentication bypass
 - HTTP binds to `127.0.0.1` unless configured otherwise.
 - Non-loopback binding requires a bearer token of at least 32 characters.
 - This project never needs Xiaohongshu cookies, passwords, SMS codes, or private API signatures.
-- Content approval is bound to a SHA-256 content hash.
+- Content approval is bound to a SHA-256 of title, body, topics, and asset file bytes. The confirmation phrase does not authenticate a human reviewer.
 - The JSON audit log excludes full post bodies and credentials.
 
 For internet-facing multi-user deployments, put the MCP endpoint behind HTTPS and standards-based OAuth, isolate tenants, encrypt storage, rate-limit requests, and centralize security logs.

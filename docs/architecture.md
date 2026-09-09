@@ -5,9 +5,9 @@ Grok / GrokBot
       │ MCP (stdio or authenticated HTTPS)
       ▼
 RedNote Ops MCP
-  ├─ deterministic content checks
-  ├─ draft and schedule workflow
-  ├─ hash-bound human approval gate
+  ├─ deterministic content checks (asset hashes use file bytes)
+  ├─ draft and schedule workflow (get / update / cancel)
+  ├─ hash-bound approval gate (does not authenticate a human)
   ├─ publication handoff package
   └─ manual metrics and summaries
       │
@@ -18,7 +18,7 @@ Human reviewer ──► official Xiaohongshu client
                  or separately approved official adapter
 ```
 
-The trust boundary is intentionally before publication. The MCP server can prepare a publication package only after a human approves the exact SHA-256 hash. It cannot turn that package into an undocumented Xiaohongshu request.
+The trust boundary is intentionally before publication. The MCP server can prepare a publication package only after `approve_draft` is called with the exact SHA-256 hash. That call does not prove a human made it. The server cannot turn the package into an undocumented Xiaohongshu request.
 
 ## Adapter policy
 

@@ -14,7 +14,7 @@
 
 - `rednote-ops` MCP：stdio 与 Streamable HTTP 两种传输
 - 本地 JSON 数据库与 JSONL 审计日志
-- 内容预检、草稿、排期、基于内容哈希的人工审批
+- 内容预检、草稿（含读取/更新/取消）、排期、基于内容哈希的审批（不能验证真人身份）
 - 发布交接包、发布结果记录与手工指标复盘
 - GrokBot 角色指令、市场文案、隐私说明和上架清单
 - GitHub Actions、Docker 部署、贡献指南、安全策略和测试
@@ -41,16 +41,19 @@ grok mcp doctor rednote_ops
 
 ## 典型工作流
 
-1. `check_content`：本地预检内容。
+1. `check_content`：本地预检内容。素材路径存在时会读取文件字节计入哈希；缺失则明确失败，不会伪造字节。
 2. `save_draft`：保存草稿并得到 `contentHash`。
-3. `submit_for_review`：进入人工审核，可设置排期。
-4. 在界面中检查完整内容、素材和哈希。
-5. `approve_draft`：人明确同意后，提交固定确认短语和当前哈希。
-6. `create_publish_package`：生成发布交接包。
-7. 人在官方客户端完成发布，再用 `record_publication` 记账。
-8. 用 `record_metrics` 录入真实数据，再通过 `operations_summary` 复盘。
+3. `get_draft` / `list_drafts`：读取单条或列出草稿。
+4. `update_draft`：修改草稿；内容哈希变化时清除批准并退回 `draft`。
+5. `submit_for_review`：进入人工审核，可设置排期。
+6. 在界面中检查完整内容、素材和哈希。
+7. `approve_draft`：提交固定确认短语和当前哈希。该短语不能验证调用者是人类，模型也可以调用。
+8. `create_publish_package`：生成发布交接包。
+9. 人在官方客户端完成发布，再用 `record_publication` 记账。
+10. 用 `record_metrics` 录入真实数据，再通过 `operations_summary` 复盘。
+11. `cancel_draft`：取消尚未发布的草稿。
 
-任何内容修改都会改变 SHA-256 哈希，旧的批准不能复用。
+任何内容或素材字节修改都会改变 SHA-256 哈希，旧的批准不能复用。
 
 ## HTTP 模式
 
