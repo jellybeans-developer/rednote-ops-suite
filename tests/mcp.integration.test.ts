@@ -12,6 +12,10 @@ afterEach(async () => {
   client = undefined;
 });
 
+function toolText(result: { content: unknown }): string {
+  return (result.content as Array<{ type: string; text: string }>)[0]!.text;
+}
+
 describe("MCP stdio transport", () => {
   it("connects, lists the safe tool set, and calls safety_status", async () => {
     const dataDir = await mkdtemp(join(tmpdir(), "rednote-mcp-"));
@@ -32,11 +36,13 @@ describe("MCP stdio transport", () => {
 
     const result = await client.callTool({ name: "safety_status", arguments: {} });
     expect(result.isError).not.toBe(true);
-    const safetyText = JSON.stringify(result.content);
-    expect(safetyText).toContain("不收集或存储小红书 Cookie");
-    expect(safetyText).toContain("\"approvalAuthenticatesHuman\": false");
-    expect(safetyText).toContain("\"assetHashIncludesFileBytes\": true");
-    expect(safetyText).toContain("模型也可以调用 approve_draft");
+    const safety = JSON.parse(toolText(result)) as {
+      limitations: { approvalAuthenticatesHuman: boolean; assetHashIncludesFileBytes: boolean };
+    };
+    expect(toolText(result)).toContain("不收集或存储小红书 Cookie");
+    expect(safety.limitations.approvalAuthenticatesHuman).toBe(false);
+    expect(safety.limitations.assetHashIncludesFileBytes).toBe(true);
+    expect(toolText(result)).toContain("模型也可以调用 approve_draft");
   });
 
   it("rejects approval when the reviewed content hash does not match", async () => {
@@ -79,9 +85,10 @@ describe("MCP stdio transport", () => {
       },
     });
     expect(approved.isError).not.toBe(true);
-    expect(JSON.stringify(approved.content)).toContain("approved");
-    expect(JSON.stringify(approved.content)).toContain("\"approvalAuthenticatesHuman\": false");
-    expect(JSON.stringify(approved.content)).toContain("不能验证调用者是人类");
+    const approvedPayload = JSON.parse(toolText(approved)) as { approvalAuthenticatesHuman: boolean };
+    expect(toolText(approved)).toContain("approved");
+    expect(approvedPayload.approvalAuthenticatesHuman).toBe(false);
+    expect(toolText(approved)).toContain("不能验证调用者是人类");
   });
 
   it("gets, updates, and cancels drafts with hash recompute and audit metadata only", async () => {
