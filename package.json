@@ -1,0 +1,47 @@
+{
+  "name": "rednote-ops-suite",
+  "version": "0.1.0",
+  "description": "Safety-first MCP server and Grok Bot package for Xiaohongshu/RedNote content operations.",
+  "type": "module",
+  "bin": {
+    "rednote-ops-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "grokbot",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run build && npm test",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/cli.js"
+  },
+  "keywords": [
+    "mcp",
+    "grok",
+    "xiaohongshu",
+    "rednote",
+    "content-operations"
+  ],
+  "author": "RedNote Ops Suite contributors",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}

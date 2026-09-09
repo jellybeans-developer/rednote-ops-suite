@@ -1,0 +1,40 @@
+{
+  "schema": "rednote-ops.grokbot-listing/v1",
+  "name": "小红书安全运营助手",
+  "shortName": "红薯运营助手",
+  "version": "0.1.0",
+  "locale": "zh-CN",
+  "category": "Productivity",
+  "tagline": "从选题到复盘，带人工审核的安全小红书运营工作流",
+  "descriptionFile": "listing.zh-CN.md",
+  "instructionsFile": "instructions.md",
+  "privacyFile": "privacy.md",
+  "starterPrompts": [
+    "为我的品牌做一份 7 天小红书内容计划，先问我必要信息。",
+    "检查这篇笔记的标题、正文和话题，列出风险与改进建议。",
+    "列出当前待审核草稿，并逐条给我审阅摘要。",
+    "总结最近发布内容的手工指标，提出下周实验建议。"
+  ],
+  "mcp": {
+    "serverName": "rednote_ops",
+    "requiredTools": [
+      "safety_status",
+      "check_content",
+      "save_draft",
+      "list_drafts",
+      "submit_for_review",
+      "approve_draft",
+      "create_publish_package",
+      "record_publication",
+      "record_metrics",
+      "operations_summary"
+    ]
+  },
+  "dataPractices": {
+    "storesPlatformCredentials": false,
+    "storesContentDrafts": true,
+    "storesMetrics": true,
+    "usesUnofficialApis": false,
+    "humanApprovalRequired": true
+  }
+}
