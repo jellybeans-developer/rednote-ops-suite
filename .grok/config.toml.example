@@ -1,0 +1,6 @@
+[mcp_servers.rednote_ops]
+command = "node"
+args = ["dist/cli.js"]
+env = { REDNOTE_DATA_DIR = ".rednote-ops" }
+startup_timeout_sec = 30
+tool_timeout_sec = 120

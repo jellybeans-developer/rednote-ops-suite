@@ -1,0 +1,20 @@
+services:
+  rednote-ops:
+    build: .
+    restart: unless-stopped
+    environment:
+      REDNOTE_MCP_TOKEN: ${REDNOTE_MCP_TOKEN:?set REDNOTE_MCP_TOKEN to at least 32 random characters}
+    ports:
+      - "127.0.0.1:3210:3210"
+    volumes:
+      - rednote-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  rednote-data:
