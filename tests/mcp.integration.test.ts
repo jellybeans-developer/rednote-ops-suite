@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { CORE_MCP_TOOL_NAMES, OFFICIAL_OPENACCOUNT_OAUTH_TOOL_NAMES } from "../src/mcp-tool-names.js";
 
 let client: Client | undefined;
 
@@ -29,19 +30,26 @@ describe("MCP stdio transport", () => {
     await client.connect(transport);
 
     const listed = await client.listTools();
-    expect(listed.tools.map((tool) => tool.name)).toEqual(expect.arrayContaining([
-      "safety_status", "save_draft", "get_draft", "update_draft", "cancel_draft",
-      "approve_draft", "create_publish_package", "operations_summary",
-    ]));
+    const toolNames = listed.tools.map((tool) => tool.name);
+    expect(toolNames.sort()).toEqual([...CORE_MCP_TOOL_NAMES].sort());
+    expect(toolNames).toHaveLength(13);
+    for (const oauthTool of OFFICIAL_OPENACCOUNT_OAUTH_TOOL_NAMES) {
+      expect(toolNames).not.toContain(oauthTool);
+    }
 
     const result = await client.callTool({ name: "safety_status", arguments: {} });
     expect(result.isError).not.toBe(true);
     const safety = JSON.parse(toolText(result)) as {
-      limitations: { approvalAuthenticatesHuman: boolean; assetHashIncludesFileBytes: boolean };
+      limitations: { approvalAuthenticatesHuman: boolean; assetHashIncludesFileBytes: boolean; officialOpenAccountOAuthEnabled: boolean };
+      officialOpenAccountOAuth: { enabled: boolean; publishesNotes: boolean; toolsExposed: boolean };
     };
     expect(toolText(result)).toContain("不收集或存储小红书 Cookie");
     expect(safety.limitations.approvalAuthenticatesHuman).toBe(false);
     expect(safety.limitations.assetHashIncludesFileBytes).toBe(true);
+    expect(safety.limitations.officialOpenAccountOAuthEnabled).toBe(false);
+    expect(safety.officialOpenAccountOAuth.enabled).toBe(false);
+    expect(safety.officialOpenAccountOAuth.toolsExposed).toBe(false);
+    expect(safety.officialOpenAccountOAuth.publishesNotes).toBe(false);
     expect(toolText(result)).toContain("模型也可以调用 approve_draft");
   });
 

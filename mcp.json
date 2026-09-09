@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "rednote_ops": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["dist/cli.js"],
+      "cwd": "${PLUGIN_ROOT}",
+      "env": {
+        "REDNOTE_DATA_DIR": "${PLUGIN_DATA}"
+      }
+    }
+  }
+}

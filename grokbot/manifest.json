@@ -3,7 +3,7 @@
   "schemaNote": "This is a project-internal listing snapshot for version control, review, and manual copy-paste. It is not a verified or official GrokBot marketplace import format.",
   "name": "小红书安全运营助手",
   "shortName": "红薯运营助手",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "locale": "zh-CN",
   "category": "Productivity",
   "tagline": "从选题到复盘，带人工审核的安全小红书运营工作流",
@@ -35,10 +35,17 @@
       "record_publication",
       "record_metrics",
       "operations_summary"
+    ],
+    "optionalOfficialOauthToolsWhenEnabled": [
+      "start_device_auth",
+      "poll_device_auth",
+      "get_connected_profile",
+      "disconnect_official_oauth"
     ]
   },
   "dataPractices": {
     "storesPlatformCredentials": false,
+    "storesOfficialOauthTokensWhenEnabled": true,
     "storesContentDrafts": true,
     "storesMetrics": true,
     "usesUnofficialApis": false,
@@ -52,7 +59,10 @@
     "humanPublishRequired": true,
     "approvalPhraseAuthenticatesHuman": false,
     "marketplaceImportFormatVerified": false,
-    "liveXiaohongshuConnection": false
+    "liveXiaohongshuConnection": false,
+    "officialOpenAccountOauthDisabledByDefault": true,
+    "officialOpenAccountOauthPublishesNotes": false,
+    "cursorMarketplaceSubmitUrl": "https://cursor.com/marketplace/publish"
   },
   "hashing": {
     "includesTitleBodyTopics": true,

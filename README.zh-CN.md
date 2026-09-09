@@ -1,10 +1,10 @@
 # RedNote Ops Suite
 
-开发中：当前是本地运营工作流原型，尚未连接小红书，Bot 市场格式尚未核实。现有确认短语不能验证真人身份。详见 [STATUS.md](STATUS.md)。
+开发中：默认可做本地草稿运营与插件安装；官方 OAuth 默认关闭且不能发笔记。市场需维护者到 cursor.com/marketplace/publish 提交公开审核。确认短语不能验证真人身份。详见 [STATUS.md](STATUS.md)。
 
-一个安全优先的小红书运营工具包，包含可供 Grok 调用的 MCP 服务，以及 GrokBot 市场发布材料。
+一个安全优先的小红书运营工具包，包含可供 Grok Bot / Cursor 调用的 MCP 服务、Agent Plugins / Cursor 插件清单，以及市场文案。
 
-> 本项目不是小红书官方产品，也未获小红书背书。它不提供私有 API 逆向、Cookie 登录、验证码绕过、刷量或无人值守发布。最终发布必须由人在小红书官方客户端确认，或由部署者自己获批的官方能力完成。
+> 本项目不是小红书官方产品，也未获小红书背书。它不提供私有 API 逆向、Cookie 登录、验证码绕过、刷量或无人值守发布。最终发布必须由人在小红书官方客户端确认。官方 openaccount OAuth（可选，默认关闭）只覆盖授权与基础资料，不是发笔记权限。
 
 ## 为什么这样设计
 
@@ -17,6 +17,7 @@
 - 内容预检、草稿（含读取/更新/取消）、排期、基于内容哈希的审批（不能验证真人身份）
 - 发布交接包、发布结果记录与手工指标复盘
 - GrokBot 角色指令、市场文案、隐私说明和上架清单
+- 仓库根目录的 `plugin.json` / `mcp.json` / `skills/`，便于作为 Cursor / Grok Bot 插件安装
 - GitHub Actions、Docker 部署、贡献指南、安全策略和测试
 
 ## 快速开始
@@ -24,10 +25,11 @@
 需要 Node.js 20 或更高版本。
 
 ```bash
-git clone https://github.com/YOUR_NAME/rednote-ops-suite.git
+git clone https://github.com/jellybeans-developer/rednote-ops-suite.git
 cd rednote-ops-suite
 npm ci
 npm run build
+npm run doctor
 ```
 
 把 MCP 加到 Grok 项目配置：
@@ -89,7 +91,7 @@ Bearer Token 适合单用户或可信团队的初始部署。公众多租户服�
 
 ## GrokBot 上架
 
-见 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。市场字段可能调整，因此仓库中的 `manifest.json` 是可审计的项目清单，不宣称是 GrokBot 官方导入格式。
+见 [`docs/use-with-grokbot.md`](docs/use-with-grokbot.md) 与 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。维护者向 Cursor / Grok Bot 市场提交的入口是 https://cursor.com/marketplace/publish（公开审核）。仓库中的 `manifest.json` 是可审计的项目清单，不宣称是 GrokBot 官方一键导入格式。
 
 ## 配置
 
@@ -100,13 +102,16 @@ Bearer Token 适合单用户或可信团队的初始部署。公众多租户服�
 | `REDNOTE_HOST` | `127.0.0.1` | HTTP 监听地址 |
 | `REDNOTE_PORT` | `3210` | HTTP 端口 |
 | `REDNOTE_MCP_TOKEN` | 空 | HTTP Bearer Token；非回环监听时强制要求 |
+| `REDNOTE_OPENACCOUNT_OAUTH_ENABLED` | `false` | 显式设为 `true` 才注册官方 OAuth 工具 |
+| `REDNOTE_OPENACCOUNT_APP_ID` / `APP_SECRET` | 空 | 仅启用 OAuth 时必填；由使用者自己注册官方应用 |
+| `REDNOTE_OPENACCOUNT_BASE_URL` | 官方生产地址 | 只允许官方 openaccount 生产或 beta 主机 |
 
 ## 当前限制
 
 - 内容限制和平台政策会变化；内置检查只做提示。
 - 指标目前由人录入，避免抓取页面或使用未公开接口。
 - JSON 存储面向单实例、小团队；生产多租户部署应实现数据库适配器。
-- 官方发布适配器需要开发者自己获得小红书相应资格与权限后贡献或配置。
+- 官方发布适配器需要开发者自己获得小红书相应资格与权限后贡献或配置。当前脚手架只做 OAuth / `min_user_info`，不能发笔记。
 
 ## 开源与安全
 

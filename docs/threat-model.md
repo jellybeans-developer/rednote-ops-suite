@@ -21,6 +21,8 @@
 | Malicious media path | Core reads asset files only to hash bytes for `contentHash`; it never executes, uploads, or renders them. Missing paths fail closed instead of inventing bytes |
 | Platform enforcement evasion | Project policy rejects CAPTCHA bypass, private API reverse engineering, and anti-detection code |
 | Model calls `approve_draft` | Tool descriptions and `safety_status` state that the confirmation phrase does not authenticate a human; publication still requires a person in an official client |
+| Official OAuth tokens leak via MCP | Adapter is off by default; tools are unregistered until enable + credentials; public payloads are stripped of token fields; audit logs store metadata only |
+| OAuth treated as publish permission | Tool results set `publishesNotes: false`; config rejects non-`basic_info` scopes and non-official hosts |
 
 ## Known limits
 
