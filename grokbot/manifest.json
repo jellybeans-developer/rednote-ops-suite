@@ -1,27 +1,34 @@
 {
   "schema": "rednote-ops.grokbot-listing/v1",
+  "schemaNote": "This is a project-internal listing snapshot for version control, review, and manual copy-paste. It is not a verified or official GrokBot marketplace import format.",
   "name": "小红书安全运营助手",
   "shortName": "红薯运营助手",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "locale": "zh-CN",
   "category": "Productivity",
   "tagline": "从选题到复盘，带人工审核的安全小红书运营工作流",
   "descriptionFile": "listing.zh-CN.md",
   "instructionsFile": "instructions.md",
   "privacyFile": "privacy.md",
+  "publishingFile": "PUBLISHING.md",
   "starterPrompts": [
     "为我的品牌做一份 7 天小红书内容计划，先问我必要信息。",
     "检查这篇笔记的标题、正文和话题，列出风险与改进建议。",
     "列出当前待审核草稿，并逐条给我审阅摘要。",
+    "打开指定草稿，核对正文、素材哈希和状态；若要改标题或正文，先更新再重新提交审核。",
     "总结最近发布内容的手工指标，提出下周实验建议。"
   ],
   "mcp": {
     "serverName": "rednote_ops",
+    "toolCount": 13,
     "requiredTools": [
       "safety_status",
       "check_content",
       "save_draft",
       "list_drafts",
+      "get_draft",
+      "update_draft",
+      "cancel_draft",
       "submit_for_review",
       "approve_draft",
       "create_publish_package",
@@ -35,6 +42,26 @@
     "storesContentDrafts": true,
     "storesMetrics": true,
     "usesUnofficialApis": false,
-    "humanApprovalRequired": true
+    "humanApprovalRequired": true,
+    "silentPublish": false
+  },
+  "disclosures": {
+    "officialXiaohongshuProduct": false,
+    "usesPrivateApi": false,
+    "requestsCookiesPasswordsOrSms": false,
+    "humanPublishRequired": true,
+    "approvalPhraseAuthenticatesHuman": false,
+    "marketplaceImportFormatVerified": false,
+    "liveXiaohongshuConnection": false
+  },
+  "hashing": {
+    "includesTitleBodyTopics": true,
+    "includesAssetFileBytes": true,
+    "missingAssetBehavior": "fail_closed_without_inventing_bytes"
+  },
+  "approval": {
+    "phrase": "I_APPROVE_PUBLICATION",
+    "bindsToContentHash": true,
+    "authenticatesHuman": false
   }
 }
