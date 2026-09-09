@@ -20,7 +20,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run build && npm test",
-    "inspect": "npx @modelcontextprotocol/inspector node dist/cli.js"
+    "inspect": "npx @modelcontextprotocol/inspector node dist/cli.js",
+    "grokbot:pack": "node scripts/pack-grokbot-listing.mjs"
   },
   "keywords": [
     "mcp",

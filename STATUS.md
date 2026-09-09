@@ -11,7 +11,8 @@ Fixed in the current MCP workflow:
 Still true / remaining:
 
 - No Xiaohongshu account connection, live data access, or publishing adapter is implemented.
-- The GrokBot platform and marketplace import format have not yet been verified. The grokbot directory contains draft listing materials only.
+- The GrokBot platform and marketplace import format have not yet been verified. Public Grok Bot docs describe creating a Bot and connecting MCP in the product UI; they do not document an official listing-import schema that this repository can claim. The grokbot directory remains draft listing materials only.
+- GrokBot listing drafts were refreshed to listing version `0.2.0` so they match the current 13 MCP tools, file-byte hashing, and the approval-phrase limitation. Refreshing copy is not a marketplace-format verification.
 - The approval phrase plus content hash only bind a review to exact content. They do not prove a human clicked. Do not add a weaker fake gate and treat it as human authentication.
 - HTTP deployment is single-user/single-process. Internet-facing or multi-user production deployment needs further hardening.
 - GitHub marketplace submission is pending.
