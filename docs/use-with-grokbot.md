@@ -1,139 +1,82 @@
-# Use with Grok Bot today / 今天就用 Grok Bot
+# 在 Grok 中使用 RedNote Ops Suite
 
-This package is installable as a local MCP plus an Agent Plugin / Cursor plugin. It does **not** auto-publish to Xiaohongshu. Official openaccount docs cover OAuth and basic profile (`min_user_info`); they do **not** document a general third-party note-publishing API.
+版本 0.5.0 同时提供一个 MCP 服务和一个 Grok Agent。Grok Build 可直接从 GitHub 安装，不需要下载或提交 ZIP。
 
-本包装成本地 MCP，并带有 Agent Plugins / Cursor 插件清单。它**不会**自动发小红书。官方 openaccount 文档覆盖 OAuth 与基础资料，**没有**通用第三方发笔记 API。
+本项目不是小红书官方产品。它只使用本地数据与可见的官方创作中心页面，不调用私有 API，不导出 Cookie，也不绕过二维码、验证码、设备确认、频率限制或平台风控。
 
-## English
+## 1. 安装
 
-### 1. Install (Node 20+)
-
-```bash
-git clone https://github.com/jellybeans-developer/rednote-ops-suite.git
-cd rednote-ops-suite
-node -v   # must be v20 or newer
-npm ci
-npm run build
-npm run doctor
-```
-
-`npm run doctor` checks Node, `dist/cli.js`, and plugin manifests. It does not talk to Xiaohongshu.
-
-### 2. Connect local MCP
-
-Primary path (stdio, no secrets in git):
-
-```bash
-grok mcp add --scope project rednote_ops -- node dist/cli.js
-grok mcp doctor rednote_ops
-```
-
-Or copy `.grok/config.toml.example` to `.grok/config.toml`.
-
-Cursor / Grok Bot plugin layout at the repo root:
-
-- `plugin.json` — Agent Plugins 1.0 manifest
-- `.cursor-plugin/plugin.json` — Cursor plugin manifest
-- `mcp.json` — local stdio MCP (`node dist/cli.js`)
-- `skills/` — operator workflow and refusal skills
-
-Local plugin smoke test in Cursor: symlink this repo to `~/.cursor/plugins/local/rednote-ops-suite`, then reload. Build `dist/cli.js` first.
-
-### 3. Optional remote HTTP MCP (bearer token)
-
-```bash
-export REDNOTE_MCP_TOKEN="$(openssl rand -hex 32)"
-node dist/cli.js --http
-grok mcp add --transport http rednote_ops https://mcp.example.com/mcp --header "Authorization: Bearer ${REDNOTE_MCP_TOKEN}"
-```
-
-Keep the token in the environment, never in `mcp.json`, plugin manifests, or git. Loopback HTTP may omit the token; non-loopback binding requires 32+ characters.
-
-### 4. Operator doctor checklist
-
-- [ ] `node -v` is 20+
-- [ ] `npm ci` and `npm run build` succeeded
-- [ ] `npm run doctor` exits 0
-- [ ] `grok mcp doctor rednote_ops` lists the 13 core tools
-- [ ] `safety_status` says no cookies, no silent publish, approval phrase does not authenticate a human
-- [ ] Official OAuth tools are **absent** unless you set `REDNOTE_OPENACCOUNT_OAUTH_ENABLED=true` with your own app id/secret
-
-### 5. Human publish steps
-
-1. `check_content` → `save_draft` → `submit_for_review`
-2. Human reviews title, body, topics, assets, and `contentHash`
-3. `approve_draft` with `I_APPROVE_PUBLICATION` and the current hash (this does not prove a human clicked)
-4. `create_publish_package`
-5. Paste into the **official Xiaohongshu client** and publish yourself
-6. `record_publication` then later `record_metrics`
-
-### 6. Experimental Creator Center browser mode
-
-This opt-in mode opens a visible local Chrome or Edge window. You complete QR/login verification yourself. The browser keeps its own session in a profile under `REDNOTE_DATA_DIR`; MCP does not export cookies, passwords, or codes.
-
-```text
-REDNOTE_CREATOR_BROWSER_ENABLED=true
-REDNOTE_CREATOR_BROWSER_CHANNEL=chrome
-REDNOTE_CREATOR_ALLOW_PUBLISH=false
-```
-
-Restart MCP, call `start_creator_login`, finish login in the visible official page, then call `creator_session_status`. After the normal draft/review/handoff flow, `prepare_creator_publish` uploads images and fills the form without clicking publish.
-
-To allow the final simulated click, set `REDNOTE_CREATOR_ALLOW_PUBLISH=true`, restart MCP, and call `publish_creator_draft` with the current content hash and `PUBLISH_TO_XIAOHONGSHU`. The result means only that the button was clicked. Verify acceptance in the visible Creator Center, then call `record_publication`.
-
-The adapter uses ordinary Playwright control with no stealth or anti-detection flags. Creator Center DOM changes can break selectors. It currently supports image notes (`jpg`, `jpeg`, `png`, `webp`) only.
-
-### What Grok Bot can do today
-
-Draft, lint, hash, approve-gate, handoff package, local audit, manual metrics. Optional official OAuth (off by default) can do device grant / token refresh / `min_user_info` only.
-
-### What it still cannot do
-
-Cookie extraction, private API publishing, CAPTCHA solving, signature reverse engineering, or unattended posting. Grok Bot documents in-app Bot creation and public share links, but no self-service Bot Marketplace submission API. Grok Build's separate plugin catalog accepts PRs at `xai-org/plugin-marketplace`. OAuth ≠ publish permission. Registering an official app is your responsibility.
-
-## 中文
-
-### 1. 安装（Node 20+）
+先安装 Node.js 20 或更高版本，然后执行：
 
 ```bash
 git clone https://github.com/jellybeans-developer/rednote-ops-suite.git
 cd rednote-ops-suite
-node -v   # 需要 20 或更高
 npm ci
 npm run build
 npm run doctor
+grok plugin install jellybeans-developer/rednote-ops-suite --trust
 ```
 
-### 2. 连接本地 MCP
+Grok 会从仓库中的 `.mcp.json` 加载 `rednote_ops` MCP，并从 `agents/rednote-operator.md` 加载 Agent。MCP 使用已提交的 `plugin-dist/` 自包含运行包，安装后不依赖仓库中的 `node_modules`。也可以在仓库中直接启动 Agent：
 
 ```bash
-grok mcp add --scope project rednote_ops -- node dist/cli.js
-grok mcp doctor rednote_ops
+grok --agent-profile agents/rednote-operator.md
 ```
 
-插件清单在仓库根目录：`plugin.json`、`.cursor-plugin/plugin.json`、`mcp.json`、`skills/`。`mcp.json` 只声明本地 `node dist/cli.js`，不含密钥。
+若本机安装了 Grok CLI，可额外运行 `grok plugin validate .`。
 
-### 3. 可选远程 HTTP MCP
+## 2. MCP 与 Agent 的分工
 
-使用环境变量中的 Bearer Token，不要把 token 写进插件文件。非回环监听必须提供至少 32 位 `REDNOTE_MCP_TOKEN`。
+- MCP 负责内容检查、草稿、排期、哈希审批、发布交接、浏览器填稿、发布点击及本地审计。
+- `rednote-operator` Agent 负责按正确顺序调用工具，并在登录、风控、逐稿批准和最终发布处保留边界。
+- `.grok-plugin/plugin.json` 是插件清单；`.grok-plugin/marketplace.json` 允许把本仓库作为自定义插件市场来源。
 
-### 4. 操作员检查清单
+## 3. 默认安全状态
 
-- [ ] Node 20+，`npm ci` / `npm run build` / `npm run doctor` 通过
-- [ ] `grok mcp doctor rednote_ops` 能看到 13 个核心工具
-- [ ] `safety_status` 写明：无 Cookie、无静默发布、确认短语不能验证人类
-- [ ] 未显式启用官方 OAuth 时，不应出现设备授权工具
+Grok 原生插件默认启用可见浏览器能力，但 `REDNOTE_CREATOR_ALLOW_PUBLISH=false`，因此可以登录、检查会话和填稿，不能点击最终发布。登录由用户在官方页面完成，浏览器状态保存在 Grok 插件数据目录，不会进入 Git。
 
-### 5. 人工发布
+如果只需要草稿工作流，可将 `REDNOTE_CREATOR_BROWSER_ENABLED` 设为 `false`。如果明确需要最终点击，将 `REDNOTE_CREATOR_ALLOW_PUBLISH` 设为 `true` 后重启 MCP。每条内容仍需最新 `contentHash` 和固定确认短语 `PUBLISH_TO_XIAOHONGSHU`。
 
-AI 准备草稿 → 哈希绑定批准 → **人在官方客户端点发布** → 本地 `record_publication` / `record_metrics`。
+## 4. 推荐工作流
 
-官方 OAuth 脚手架默认关闭。启用后也只做扫码授权与基础资料；**不能发笔记**。注册开放平台应用是使用者自己的责任。
+1. `safety_status`
+2. `check_content`
+3. `save_draft`
+4. `submit_for_review`
+5. 用户核对完整内容、素材与当前哈希
+6. `approve_draft`
+7. `create_publish_package`
+8. `creator_session_status`；如未登录，调用 `start_creator_login` 并由用户完成官方验证
+9. `prepare_creator_publish`
+10. 用户明确要求发布且开关允许时，调用 `publish_creator_draft`
+11. 平台返回成功后调用 `record_publication`
+12. 后续检查创作中心审核状态并用 `record_metrics` 记录真实数据
 
-### 6. 实验性创作中心模拟登录与发布
+发布按钮被点击不等于平台已接受，平台接受也不等于最终审核通过。Agent 必须如实区分这三种状态。
 
-设置 `REDNOTE_CREATOR_BROWSER_ENABLED=true` 后重启 MCP，调用 `start_creator_login`。程序会打开可见的官方创作中心，用户亲自完成扫码或验证。Chrome/Edge 在本机 Profile 中保存会话，MCP 不导出 Cookie、密码或验证码。
+## 5. 验证与风控
 
-正常完成草稿、审核和交接包后，调用 `prepare_creator_publish` 自动上传图片并填写标题、正文、话题，但不会点击发布。若还需要模拟最终点击，单独设置 `REDNOTE_CREATOR_ALLOW_PUBLISH=true` 并重启，再调用 `publish_creator_draft`。它只证明发布按钮被点击；必须在可见页面确认平台接收成功，然后调用 `record_publication`。
+二维码、验证码、扫码确认、登录异常和设备校验只能由用户在小红书官方页面处理。本项目不会尝试绕过。浏览器会保留正常登录会话，因此平台未再次要求验证时，后续操作可以复用；是否再次验证完全由平台决定。
 
-此模式当前只支持图片笔记，依赖创作中心网页结构，页面更新后可能需要更新选择器。实现未使用隐身或反检测参数。
+## 6. Grok.com 自定义连接器
+
+Grok.com 的自定义 MCP 连接器需要一个公网可访问的 HTTP MCP 地址。可使用 `node dist/cli.js --http` 启动服务，再通过 HTTPS 反向代理发布并设置强随机 Bearer Token。远程服务只能控制它所在机器上的浏览器；若要使用本机 Chrome/Edge 发布，优先使用本地 Grok Build 插件。
+
+## 7. 上架
+
+任何人现在都可以通过 GitHub 仓库直接安装。进入 xAI 官方 Grok Build 插件目录还需要向 [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace) 提交 PR，并把来源固定到完整的 40 位提交 SHA。仓库中的 `grokbot/` 保留应用内 Bot 的名称、介绍和隐私文案，但不再生成 ZIP。
+
+---
+
+## English quick guide
+
+RedNote Ops Suite 0.5.0 contains one MCP server and one native Grok Agent. Install it directly from GitHub:
+
+```bash
+npm ci
+npm run build
+grok plugin install jellybeans-developer/rednote-ops-suite --trust
+grok --agent-profile agents/rednote-operator.md
+```
+
+The plugin loads `.mcp.json`, `agents/rednote-operator.md`, and the bundled skills. Visible Creator Center automation is available, but the final click is disabled by default and requires both `REDNOTE_CREATOR_ALLOW_PUBLISH=true` and an exact per-draft confirmation. Never bypass QR, CAPTCHA, device checks, rate limits, or risk controls. A click, platform acceptance, and final content approval are distinct states.

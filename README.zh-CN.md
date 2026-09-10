@@ -1,10 +1,10 @@
 # RedNote Ops Suite
 
-开发中：0.4.0 新增默认关闭的创作中心模拟登录、自动填稿和可选发布点击。网页结构变化可能导致失效，尚未用真实账号完成发布测试。详见 [STATUS.md](STATUS.md)。
+0.5.0 已加入 Grok 原生插件结构：一个 MCP 服务和一个 `rednote-operator` Agent。本机创作中心适配器已用国内账号验证登录、自动填稿及一次成功发布；网页结构变化仍可能导致失效。详见 [STATUS.md](STATUS.md)。
 
-一个安全优先的小红书运营工具包，包含可供 Grok Bot / Cursor 调用的 MCP 服务、Agent Plugins / Cursor 插件清单，以及市场文案。
+一个安全优先的小红书运营工具包，包含可供 Grok / Cursor 调用的 MCP 服务、Grok Agent、插件清单与市场文案。
 
-> 本项目不是小红书官方产品，也未获小红书背书。它不提供私有 API 逆向、Cookie 登录、验证码绕过、刷量或无人值守发布。最终发布必须由人在小红书官方客户端确认。官方 openaccount OAuth（可选，默认关闭）只覆盖授权与基础资料，不是发笔记权限。
+> 本项目不是小红书官方产品，也未获小红书背书。它不提供私有 API 逆向、Cookie 导出、验证码或风控绕过、刷量。最终发布点击默认关闭；启用后仍在可见的官方创作中心执行，并要求逐稿哈希确认。官方 openaccount OAuth 只覆盖授权与基础资料，不是发笔记权限。
 
 ## 为什么这样设计
 
@@ -16,7 +16,7 @@
 - 本地 JSON 数据库与 JSONL 审计日志
 - 内容预检、草稿（含读取/更新/取消）、排期、基于内容哈希的审批（不能验证真人身份）
 - 发布交接包、发布结果记录与手工指标复盘
-- GrokBot 角色指令、市场文案、隐私说明和上架清单
+- Grok 原生 `agents/rednote-operator.md`、`.mcp.json`、市场清单与隐私说明
 - 仓库根目录的 `plugin.json` / `mcp.json` / `skills/`，便于作为 Cursor / Grok Bot 插件安装
 - GitHub Actions、Docker 部署、贡献指南、安全策略和测试
 - 可选的本机 Chrome/Edge 创作中心适配器：用户亲自登录，程序上传图片、填写内容，并可在独立开关启用后点击发布
@@ -33,11 +33,11 @@ npm run build
 npm run doctor
 ```
 
-把 MCP 加到 Grok 项目配置：
+直接从 GitHub 安装 Grok 插件并启动 Agent：
 
 ```bash
-grok mcp add --scope project rednote_ops -- node dist/cli.js
-grok mcp doctor rednote_ops
+grok plugin install jellybeans-developer/rednote-ops-suite --trust
+grok --agent-profile agents/rednote-operator.md
 ```
 
 也可以复制 `.grok/config.toml.example` 为 `.grok/config.toml`。不要把真实 Token 写进 Git。
@@ -52,7 +52,7 @@ grok mcp doctor rednote_ops
 6. 在界面中检查完整内容、素材和哈希。
 7. `approve_draft`：提交固定确认短语和当前哈希。该短语不能验证调用者是人类，模型也可以调用。
 8. `create_publish_package`：生成发布交接包。
-9. 人在官方客户端完成发布，再用 `record_publication` 记账。
+9. 默认由人在官方客户端发布；若单独启用浏览器发布开关，可调用 `prepare_creator_publish`，在逐稿确认后调用 `publish_creator_draft`。平台返回成功后再用 `record_publication` 记账。
 10. 用 `record_metrics` 录入真实数据，再通过 `operations_summary` 复盘。
 11. `cancel_draft`：取消尚未发布的草稿。
 
@@ -90,9 +90,9 @@ grok mcp add --transport http rednote_ops https://mcp.example.com/mcp --header "
 
 Bearer Token 适合单用户或可信团队的初始部署。公众多租户服务必须增加标准 OAuth、租户隔离、限流、加密存储、备份和数据删除接口。
 
-## GrokBot 上架
+## Grok Agent 安装与上架
 
-见 [`docs/use-with-grokbot.md`](docs/use-with-grokbot.md) 与 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。Grok Bot 可在应用内创建并分享公开 Bot；官方尚未公开 Bot Marketplace 的自助提交接口。Grok Build 插件市场是另一条路径，通过 `xai-org/plugin-marketplace` 提交 PR。仓库中的 `manifest.json` 只是可审计的项目清单，不宣称是官方一键导入格式。
+见 [`docs/use-with-grokbot.md`](docs/use-with-grokbot.md) 与 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。Grok Build 可以直接从此 GitHub 仓库安装，并自动发现 `.mcp.json`、`agents/` 与 `skills/`。进入 xAI 官方公共插件目录仍需向 `xai-org/plugin-marketplace` 提交 PR；仓库不再生成或保存 ZIP 上架包。
 
 ## 实验性模拟登录与发布
 
@@ -106,7 +106,7 @@ REDNOTE_CREATOR_ALLOW_PUBLISH=false
 
 重启 MCP 后依次调用：`start_creator_login` → 用户登录 → `creator_session_status` → 正常草稿审批流程 → `prepare_creator_publish`。确认自动填入内容无误后，如确实需要由工具点击最终发布按钮，再将 `REDNOTE_CREATOR_ALLOW_PUBLISH=true` 并重启 MCP，然后调用 `publish_creator_draft`。
 
-浏览器登录状态由 Chrome/Edge 自己保存在 `REDNOTE_DATA_DIR/creator-browser-profile`。不要把该目录提交到 Git。网页自动化没有使用反检测参数，也不会导出 Cookie。发布工具点击后不会擅自把本地草稿标为已发布；需要在创作中心确认成功，再调用 `record_publication`。
+浏览器登录状态由 Chrome/Edge 自己保存在 `REDNOTE_DATA_DIR/creator-browser-profile`。不要把该目录提交到 Git。网页自动化没有使用反检测参数，也不会导出 Cookie。发布工具点击后不会擅自把本地草稿标为已发布；只有创作中心返回成功并取得公开笔记 ID 后，才调用 `record_publication`。平台可能随后审核拒绝，因此仍需检查内容管理状态。
 
 ## 配置
 

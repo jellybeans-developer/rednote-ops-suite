@@ -1,23 +1,18 @@
 # Release checklist / 发版检查
 
-Cut a GitHub-ready tag only after `main` (or the release PR) has plugin packaging, the default-off official OAuth scaffold, and green `npm run check`.
-
-打 `vX.Y.Z` 标签前：插件清单、默认关闭的官方 OAuth 脚手架、以及 `npm run check` 都必须就绪。不要宣称可以自动发笔记。
-
-## Commands
+版本来源为 `package.json`，当前为 `0.5.0`。发版前执行：
 
 ```bash
 npm ci
 npm run check
-npm run grokbot:pack
+npm run doctor
 npm run release:check
+grok plugin validate .
 ```
 
-`release:check` verifies version alignment across `package.json`, `plugin.json`, `.cursor-plugin/plugin.json`, and `grokbot/manifest.json`, and that `mcp.json` has no secrets.
+`grok plugin validate .` 需要本机已安装 Grok CLI；其余检查由仓库测试覆盖。
 
-## Tag
-
-Version source of truth: `package.json` `version` (currently intended `0.4.0`).
+`release:check` 会核对 `package.json`、通用 Agent Plugin、Cursor 插件、Grok 原生插件、市场清单和旧 Bot 文案版本，并检查 MCP 配置没有密钥。
 
 ```bash
 VERSION="$(node -p "require('./package.json').version")"
@@ -25,10 +20,10 @@ git tag "v${VERSION}"
 git push origin "v${VERSION}"
 ```
 
-Then attach `dist/grokbot-listing-${VERSION}.zip` on the GitHub Release if reviewers need listing copy. That zip is **not** an official one-click GrokBot import package.
+本项目不生成、不提交 ZIP。GitHub 仓库本身就是安装来源：
 
-## Marketplace next step (maintainer)
+```bash
+grok plugin install jellybeans-developer/rednote-ops-suite --trust
+```
 
-Create the Bot in Grok Bot, copy the reviewed fields from `grokbot/`, and use the product's public share-link flow. The official docs do not currently document a self-service Bot Marketplace submission API. Grok Build's separate plugin marketplace accepts pull requests at [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace). Do not invent an official Grok Bot listing-import schema.
-
-市场审核是仓库外部流程；合并本仓库的 PR 不会自动上架。
+若要进入 xAI 官方插件目录，向 [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace) 提交 PR，并按该仓库要求固定完整提交 SHA、更新索引并通过校验。市场审核是仓库外部流程；推送本仓库不会自动完成官方上架。

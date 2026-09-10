@@ -1,0 +1,21 @@
+{
+  "name": "rednote-ops-suite-marketplace",
+  "description": "Official repository marketplace for RedNote Ops Suite.",
+  "owner": {
+    "name": "jellybeans-developer"
+  },
+  "plugins": [
+    {
+      "name": "rednote-ops-suite",
+      "description": "Grok Agent and MCP workflow for safe Xiaohongshu/RedNote operations.",
+      "category": "productivity",
+      "source": {
+        "type": "local",
+        "path": "."
+      },
+      "version": "0.5.0",
+      "homepage": "https://github.com/jellybeans-developer/rednote-ops-suite",
+      "keywords": ["xiaohongshu", "rednote", "mcp", "grok-agent"]
+    }
+  ]
+}

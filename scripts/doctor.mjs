@@ -25,11 +25,16 @@ if (versionMajor(process.versions.node) < 20) {
 const requiredFiles = [
   "plugin.json",
   "mcp.json",
+  ".mcp.json",
+  ".grok-plugin/plugin.json",
+  ".grok-plugin/marketplace.json",
+  "agents/rednote-operator.md",
   ".cursor-plugin/plugin.json",
   "skills/rednote-ops-workflow/SKILL.md",
   "skills/rednote-ops-safety/SKILL.md",
   "docs/use-with-grokbot.md",
   "dist/cli.js",
+  "plugin-dist/index.js",
 ];
 
 for (const relativePath of requiredFiles) {
@@ -43,18 +48,20 @@ for (const relativePath of requiredFiles) {
 }
 
 const mcp = JSON.parse(await readFile(join(repoRoot, "mcp.json"), "utf8"));
-if (JSON.stringify(mcp).match(/Bearer |app_secret|sk_/i)) {
-  errors.push("mcp.json must not contain bearer tokens or app secrets");
+const grokMcp = JSON.parse(await readFile(join(repoRoot, ".mcp.json"), "utf8"));
+if (JSON.stringify({ mcp, grokMcp }).match(/Bearer |app_secret|sk_/i)) {
+  errors.push("MCP configuration must not contain bearer tokens or app secrets");
 } else {
-  notes.push("mcp.json has no embedded secrets");
+  notes.push("MCP configurations have no embedded secrets");
 }
 
 notes.push("Official openaccount OAuth stays disabled unless REDNOTE_OPENACCOUNT_OAUTH_ENABLED=true");
 notes.push("OAuth is not publish permission. Human publishing remains the default.");
 notes.push("Visible creator-browser automation stays disabled unless REDNOTE_CREATOR_BROWSER_ENABLED=true");
 notes.push("Final publish click additionally requires REDNOTE_CREATOR_ALLOW_PUBLISH=true and an exact confirmation phrase");
-notes.push("Next: grok mcp add --scope project rednote_ops -- node dist/cli.js");
-notes.push("Then: grok mcp doctor rednote_ops");
+notes.push("Install: grok plugin install jellybeans-developer/rednote-ops-suite --trust");
+notes.push("Validate (when Grok CLI is installed): grok plugin validate .");
+notes.push("Run directly: grok --agent-profile agents/rednote-operator.md");
 
 for (const note of notes) process.stdout.write(`ok  ${note}\n`);
 if (errors.length) {
