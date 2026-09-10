@@ -14,7 +14,7 @@ Honest product truth: official Xiaohongshu **openaccount** docs expose OAuth, de
 ## Still blocked / external
 
 - **Browser adapter is not yet live-account validated.** Selectors can break when the Creator Center UI changes. Publish click does not prove the platform accepted the note; the user must verify the result.
-- **Marketplace review is external.** A maintainer must submit the public repo at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish). This repository does not invent an official one-click GrokBot import schema. `grokbot/manifest.json` remains a project-internal snapshot (`rednote-ops.grokbot-listing/v1`).
+- **Marketplace review is external.** Grok Bot documents in-app Bot creation and public share links, but not a self-service Bot Marketplace submission API. Grok Build's separate plugin marketplace accepts PRs at `xai-org/plugin-marketplace`. This repository does not invent an official one-click Grok Bot import schema. `grokbot/manifest.json` remains a project-internal snapshot (`rednote-ops.grokbot-listing/v1`).
 - The approval phrase plus `contentHash` only bind a review to exact content. They do not prove a human clicked. A model can still call `approve_draft`.
 - HTTP deployment is single-user/single-process. Internet-facing or multi-user production still needs HTTPS, standard OAuth for the MCP itself, tenant isolation, and stronger storage.
 - Registering a Xiaohongshu openaccount app, passing platform review, and obtaining any future official publish scope are the user's responsibility. OAuth ≠ publish permission.

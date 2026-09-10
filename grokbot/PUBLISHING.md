@@ -2,14 +2,15 @@
 
 本目录是**可复制的上架草稿**，用于对照 MCP 真实能力填写创建页。`manifest.json` 的 schema 为项目内部清单（`rednote-ops.grokbot-listing/v1`），**不是**已核实的 GrokBot 官方一键导入格式。公开文档描述的是在产品里创建 Bot、编辑资料和连接 MCP；不要发明官方 listing 导入规范。
 
-当前清单版本：`0.3.0`（可安装插件包装、13 个核心 MCP 工具、默认关闭的官方 OAuth 脚手架、批准短语不能验证人类）。
+当前清单版本：`0.4.0`（13 个核心 MCP 工具、默认关闭的官方 OAuth，以及默认关闭的可见浏览器模拟登录/发布工具）。
 
 ## 维护者下一步（真实市场路径）
 
 1. 确保 GitHub 仓库公开，且 `main` 含 `plugin.json` / `.cursor-plugin/plugin.json` / `mcp.json` / `skills/`。
-2. 在 [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) **提交公开审核**。Cursor / Grok Bot 市场走人工评审，合并本仓库 PR 不会自动上架。
-3. 若创建 Bot 的界面是表单而不是仓库导入，把 `listing.zh-CN.md`、`instructions.md`、`privacy.md` **手工复制**进去；需要结构化字段时对照 `manifest.json`。
-4. 只授权默认的 13 个核心工具。官方 OAuth 四件套仅在部署者显式启用后出现，且不能当作发笔记权限。
+2. 在 Grok Bot 应用内创建 Bot，按本目录文案配置名称、描述、技能与审批边界，然后生成公开分享链接。官方文档当前没有公开 Bot Marketplace 的自助提交接口；进入官方 Marketplace 仍取决于平台审核或邀请。
+3. 若发布的是 Grok Build 插件（与 Bot Marketplace 不同），向 [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace) 提交 PR。
+4. 若创建 Bot 的界面是表单而不是仓库导入，把 `listing.zh-CN.md`、`instructions.md`、`privacy.md` **手工复制**进去；需要结构化字段时对照 `manifest.json`。
+5. 默认只授权 13 个核心工具。官方 OAuth 四件套和创作中心浏览器五件套仅在部署者分别显式启用后出现；自动点击发布还需要第二个开关与逐稿确认。
 
 `npm run grokbot:pack` 生成的 zip 只便于审阅和归档，**不能**当作官方市场导入包。
 

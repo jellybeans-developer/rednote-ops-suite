@@ -48,5 +48,6 @@ if (pack.status !== 0) {
 
 process.stdout.write(`release checklist passed for v${version}\n`);
 process.stdout.write(`Tag with: git tag v${version} && git push origin v${version}\n`);
-process.stdout.write("Maintainer marketplace next step: https://cursor.com/marketplace/publish\n");
+process.stdout.write("Bot next step: create/share it in Grok Bot; public Marketplace submission is not documented.\n");
+process.stdout.write("Grok Build plugin catalog: submit a PR to https://github.com/xai-org/plugin-marketplace\n");
 process.stdout.write("This does not publish notes to Xiaohongshu and is not a one-click GrokBot import schema.\n");

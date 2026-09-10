@@ -29,6 +29,6 @@ Then attach `dist/grokbot-listing-${VERSION}.zip` on the GitHub Release if revie
 
 ## Marketplace next step (maintainer)
 
-Submit the public repository at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) for Cursor / Grok Bot public review. Do not invent an official GrokBot listing-import schema. Copy `grokbot/` fields into the product UI when the create flow is form-based.
+Create the Bot in Grok Bot, copy the reviewed fields from `grokbot/`, and use the product's public share-link flow. The official docs do not currently document a self-service Bot Marketplace submission API. Grok Build's separate plugin marketplace accepts pull requests at [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace). Do not invent an official Grok Bot listing-import schema.
 
 市场审核是仓库外部流程；合并本仓库的 PR 不会自动上架。

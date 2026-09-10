@@ -74,7 +74,9 @@
     "liveXiaohongshuConnection": false,
     "officialOpenAccountOauthDisabledByDefault": true,
     "officialOpenAccountOauthPublishesNotes": false,
-    "cursorMarketplaceSubmitUrl": "https://cursor.com/marketplace/publish"
+    "botMarketplaceUrl": "https://x.ai/bot/marketplace",
+    "officialBotSelfServiceSubmissionDocumented": false,
+    "grokBuildPluginMarketplaceRepository": "https://github.com/xai-org/plugin-marketplace"
   },
   "hashing": {
     "includesTitleBodyTopics": true,

@@ -89,7 +89,7 @@ Draft, lint, hash, approve-gate, handoff package, local audit, manual metrics. O
 
 ### What it still cannot do
 
-Cookie login, private API publishing, CAPTCHA solving, signature reverse engineering, unattended posting, or marketplace listing until a maintainer submits https://cursor.com/marketplace/publish for public review. OAuth ≠ publish permission. Registering an official app is your responsibility.
+Cookie extraction, private API publishing, CAPTCHA solving, signature reverse engineering, or unattended posting. Grok Bot documents in-app Bot creation and public share links, but no self-service Bot Marketplace submission API. Grok Build's separate plugin catalog accepts PRs at `xai-org/plugin-marketplace`. OAuth ≠ publish permission. Registering an official app is your responsibility.
 
 ## 中文
 

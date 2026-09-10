@@ -19,7 +19,7 @@
 - **必须人工发布**：`create_publish_package` 只生成交接包，不会静默发帖。最终发布须由人在小红书官方客户端完成。官方 OAuth 不是发笔记权限。
 - **批准短语不是真人认证**：固定确认短语 `I_APPROVE_PUBLICATION` 与 `contentHash` 只能把批准绑定到这一份内容。它不能证明点击者是人类；模型也可以调用 `approve_draft`。不要把它当作独立的真人授权边界。
 - **素材哈希按文件字节计算**：路径存在时读取文件字节计入 SHA-256；缺失、非普通文件或不可读则失败，不会用路径字符串或空字节伪造哈希。
-- **能力边界**：默认开源版本没有自动发布适配器，也没有已核实的 GrokBot 一键导入格式。可安装插件在仓库根目录（`plugin.json` / `mcp.json` / `skills/`）。维护者需自行到 https://cursor.com/marketplace/publish 提交公开审核。
+- **能力边界**：浏览器模拟登录与发布默认关闭，没有已核实的 Grok Bot 一键导入格式。可安装插件在仓库根目录（`plugin.json` / `mcp.json` / `skills/`）。Bot 可在 Grok Bot 应用内创建和分享；官方尚未公开 Bot Marketplace 自助提交接口。Grok Build 插件目录另通过 `xai-org/plugin-marketplace` PR 提交。
 - **官方 OAuth ≠ 发笔记**：可选的 openaccount 设备授权脚手架默认关闭；启用后也只覆盖官方文档中的授权与 `min_user_info`，不能发笔记。注册官方应用是使用者自己的责任。
 
 安全设计：不刷量，不绕过验证码或平台风控，不在没有显式批准和人工发布的情况下把内容推到小红书。

@@ -4,7 +4,7 @@
 
 `manifest.json` 是本项目的可移植清单，用于版本管理和审核。它使用项目内部 schema `rednote-ops.grokbot-listing/v1`，**不是**已核实的 GrokBot 市场官方导入格式。不要假设存在一键导入。
 
-可安装插件（Grok Bot / Cursor）在仓库根目录：`plugin.json`、`.cursor-plugin/plugin.json`、`mcp.json`、`skills/`。维护者向市场提交的真实入口是 [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish)（公开审核）。
+可安装插件文件在仓库根目录：`plugin.json`、`.cursor-plugin/plugin.json`、`mcp.json`、`skills/`。Grok Bot 可在应用内创建并生成公开分享链接；官方尚未公开 Bot Marketplace 自助提交接口。Grok Build 的独立插件市场通过 [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace) 接收 PR。
 
 Bot 依赖本仓库构建后的 `rednote-ops` MCP（`node dist/cli.js`）。建议先使用本地 stdio；公开上架时部署 HTTPS MCP，并用环境变量传递至少 32 位 Bearer Token。插件文件里不要放密钥。
 

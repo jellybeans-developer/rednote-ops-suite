@@ -92,7 +92,7 @@ Bearer Token 适合单用户或可信团队的初始部署。公众多租户服�
 
 ## GrokBot 上架
 
-见 [`docs/use-with-grokbot.md`](docs/use-with-grokbot.md) 与 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。维护者向 Cursor / Grok Bot 市场提交的入口是 https://cursor.com/marketplace/publish（公开审核）。仓库中的 `manifest.json` 是可审计的项目清单，不宣称是 GrokBot 官方一键导入格式。
+见 [`docs/use-with-grokbot.md`](docs/use-with-grokbot.md) 与 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。Grok Bot 可在应用内创建并分享公开 Bot；官方尚未公开 Bot Marketplace 的自助提交接口。Grok Build 插件市场是另一条路径，通过 `xai-org/plugin-marketplace` 提交 PR。仓库中的 `manifest.json` 只是可审计的项目清单，不宣称是官方一键导入格式。
 
 ## 实验性模拟登录与发布
 
