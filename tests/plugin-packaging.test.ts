@@ -10,7 +10,7 @@ async function readJson(relativePath: string): Promise<Record<string, unknown>> 
 }
 
 describe("plugin packaging", () => {
-  it("ships Agent Plugin and Cursor plugin manifests at 0.3.0 without secrets", async () => {
+  it("ships aligned Agent Plugin and Cursor plugin manifests without secrets", async () => {
     const pkg = await readJson("package.json");
     const plugin = await readJson("plugin.json");
     const cursorPlugin = await readJson(".cursor-plugin/plugin.json");

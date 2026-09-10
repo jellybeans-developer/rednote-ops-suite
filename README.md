@@ -1,6 +1,6 @@
 # RedNote Ops Suite
 
-Local draft ops and plugin packaging are shippable in 0.3.0. There is no auto-publish, and marketplace listing still needs a maintainer submission. The approval phrase does not authenticate a human. See [STATUS.md](STATUS.md).
+Version 0.4.0 adds an opt-in experimental local Creator Center browser adapter for user-completed login, form filling, and separately enabled publish clicking. It has not been validated with a real account. See [STATUS.md](STATUS.md).
 
 Safety-first Xiaohongshu/RedNote operations for Grok Bot / Cursor: an open-source MCP server, Agent Plugin / Cursor plugin layout, and versioned listing copy.
 

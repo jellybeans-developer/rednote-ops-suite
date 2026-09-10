@@ -67,6 +67,22 @@ Keep the token in the environment, never in `mcp.json`, plugin manifests, or git
 5. Paste into the **official Xiaohongshu client** and publish yourself
 6. `record_publication` then later `record_metrics`
 
+### 6. Experimental Creator Center browser mode
+
+This opt-in mode opens a visible local Chrome or Edge window. You complete QR/login verification yourself. The browser keeps its own session in a profile under `REDNOTE_DATA_DIR`; MCP does not export cookies, passwords, or codes.
+
+```text
+REDNOTE_CREATOR_BROWSER_ENABLED=true
+REDNOTE_CREATOR_BROWSER_CHANNEL=chrome
+REDNOTE_CREATOR_ALLOW_PUBLISH=false
+```
+
+Restart MCP, call `start_creator_login`, finish login in the visible official page, then call `creator_session_status`. After the normal draft/review/handoff flow, `prepare_creator_publish` uploads images and fills the form without clicking publish.
+
+To allow the final simulated click, set `REDNOTE_CREATOR_ALLOW_PUBLISH=true`, restart MCP, and call `publish_creator_draft` with the current content hash and `PUBLISH_TO_XIAOHONGSHU`. The result means only that the button was clicked. Verify acceptance in the visible Creator Center, then call `record_publication`.
+
+The adapter uses ordinary Playwright control with no stealth or anti-detection flags. Creator Center DOM changes can break selectors. It currently supports image notes (`jpg`, `jpeg`, `png`, `webp`) only.
+
 ### What Grok Bot can do today
 
 Draft, lint, hash, approve-gate, handoff package, local audit, manual metrics. Optional official OAuth (off by default) can do device grant / token refresh / `min_user_info` only.
@@ -113,3 +129,11 @@ grok mcp doctor rednote_ops
 AI 准备草稿 → 哈希绑定批准 → **人在官方客户端点发布** → 本地 `record_publication` / `record_metrics`。
 
 官方 OAuth 脚手架默认关闭。启用后也只做扫码授权与基础资料；**不能发笔记**。注册开放平台应用是使用者自己的责任。
+
+### 6. 实验性创作中心模拟登录与发布
+
+设置 `REDNOTE_CREATOR_BROWSER_ENABLED=true` 后重启 MCP，调用 `start_creator_login`。程序会打开可见的官方创作中心，用户亲自完成扫码或验证。Chrome/Edge 在本机 Profile 中保存会话，MCP 不导出 Cookie、密码或验证码。
+
+正常完成草稿、审核和交接包后，调用 `prepare_creator_publish` 自动上传图片并填写标题、正文、话题，但不会点击发布。若还需要模拟最终点击，单独设置 `REDNOTE_CREATOR_ALLOW_PUBLISH=true` 并重启，再调用 `publish_creator_draft`。它只证明发布按钮被点击；必须在可见页面确认平台接收成功，然后调用 `record_publication`。
+
+此模式当前只支持图片笔记，依赖创作中心网页结构，页面更新后可能需要更新选择器。实现未使用隐身或反检测参数。

@@ -17,7 +17,7 @@ npm run release:check
 
 ## Tag
 
-Version source of truth: `package.json` `version` (currently intended `0.3.0`).
+Version source of truth: `package.json` `version` (currently intended `0.4.0`).
 
 ```bash
 VERSION="$(node -p "require('./package.json').version")"

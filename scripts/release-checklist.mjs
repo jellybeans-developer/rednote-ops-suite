@@ -39,7 +39,8 @@ if (mismatches.length) {
   process.exit(1);
 }
 
-const pack = spawnSync("npm", ["run", "grokbot:pack"], { cwd: repoRoot, encoding: "utf8" });
+const packScript = join(repoRoot, "scripts", "pack-grokbot-listing.mjs");
+const pack = spawnSync(process.execPath, [packScript], { cwd: repoRoot, encoding: "utf8" });
 if (pack.status !== 0) {
   process.stderr.write(pack.stderr || pack.stdout || "grokbot:pack failed\n");
   process.exit(pack.status ?? 1);

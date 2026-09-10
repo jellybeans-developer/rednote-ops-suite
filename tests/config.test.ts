@@ -2,6 +2,24 @@ import { describe, expect, it } from "vitest";
 import { loadConfig } from "../src/config.js";
 
 describe("configuration", () => {
+  it("keeps creator browser and publish clicking disabled by default", () => {
+    const config = loadConfig({} as NodeJS.ProcessEnv);
+    expect(config.creatorBrowser.enabled).toBe(false);
+    expect(config.creatorBrowser.allowPublish).toBe(false);
+    expect(config.creatorBrowser.loginUrl).toBe("https://creator.rednote.com/login?source=official");
+  });
+
+  it("requires creator browser before publish clicking and validates the channel", () => {
+    expect(() => loadConfig({ REDNOTE_CREATOR_ALLOW_PUBLISH: "true" } as NodeJS.ProcessEnv)).toThrow(/requires/);
+    expect(() => loadConfig({ REDNOTE_CREATOR_BROWSER_ENABLED: "true", REDNOTE_CREATOR_BROWSER_CHANNEL: "firefox" } as NodeJS.ProcessEnv)).toThrow(/chrome or msedge/);
+    const config = loadConfig({
+      REDNOTE_CREATOR_BROWSER_ENABLED: "true",
+      REDNOTE_CREATOR_ALLOW_PUBLISH: "true",
+      REDNOTE_CREATOR_BROWSER_CHANNEL: "msedge",
+    } as NodeJS.ProcessEnv);
+    expect(config.creatorBrowser.allowPublish).toBe(true);
+    expect(config.creatorBrowser.channel).toBe("msedge");
+  });
   it("defaults to loopback", () => {
     const config = loadConfig({} as NodeJS.ProcessEnv);
     expect(config.host).toBe("127.0.0.1");

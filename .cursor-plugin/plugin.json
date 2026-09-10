@@ -1,6 +1,6 @@
 {
   "name": "rednote-ops-suite",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Safety-first Xiaohongshu/RedNote ops plugin: local MCP drafts, hash-bound approval, and human publish handoff. Official openaccount OAuth is optional and profile-only.",
   "author": {
     "name": "RedNote Ops Suite contributors"

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "rednote-ops-suite",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Safety-first Xiaohongshu/RedNote ops: local MCP drafts, hash-bound approval, and human publish handoff. No cookie/private-API publishing.",
   "author": {
     "name": "RedNote Ops Suite contributors",

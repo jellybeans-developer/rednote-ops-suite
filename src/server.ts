@@ -3,10 +3,13 @@ import { resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import type { AppConfig } from "./config.js";
+import { PlaywrightCreatorDriver, type CreatorBrowserDriver } from "./creator-browser/driver.js";
+import { registerCreatorBrowserTools } from "./creator-browser/mcp-tools.js";
 import { AssetAccessError, checkContent, contentHash, contentHashForAssetPaths, inspectAssetFiles, normalizeTopics } from "./content.js";
 import {
   CORE_MCP_TOOL_NAMES,
   OFFICIAL_OPENACCOUNT_OAUTH_TOOL_NAMES,
+  CREATOR_BROWSER_TOOL_NAMES,
   PACKAGE_VERSION,
 } from "./mcp-tool-names.js";
 import {
@@ -21,6 +24,7 @@ import type { ContentDraft, DraftStatus, MetricSnapshot } from "./types.js";
 
 export interface CreateRedNoteServerOptions {
   openAccountHttpClient?: OfficialOpenAccountHttpClient;
+  creatorBrowserDriver?: CreatorBrowserDriver;
 }
 
 const APPROVAL_PHRASE = "I_APPROVE_PUBLICATION";
@@ -82,7 +86,7 @@ export async function createRedNoteServer(
       capabilities: ["内容草稿", "内容检查", "草稿读取/更新/取消", "排期", "人工审批（非身份认证）", "发布交接包", "手工指标记录"],
       coreToolNames: CORE_MCP_TOOL_NAMES,
       boundaries: [
-        "不收集或存储小红书 Cookie、密码、短信验证码",
+        "不要求或返回小红书 Cookie、密码、短信验证码；启用模拟登录时，Chrome/Edge 会在本机 Profile 中保存自己的登录会话",
         "不逆向私有接口、不绕过验证码或平台风控",
         "不静默发布；每条内容都要求显式批准后，由人在官方客户端完成发布",
         "当前开源版本不声称拥有小红书自动发布官方 API 权限",
@@ -97,6 +101,8 @@ export async function createRedNoteServer(
         officialOpenAccountOAuthPublishesNotes: false,
         assetHashIncludesFileBytes: true,
         missingAssetsFailClosed: true,
+        creatorBrowserEnabled: config.creatorBrowser.enabled,
+        creatorBrowserMayClickPublish: config.creatorBrowser.enabled && config.creatorBrowser.allowPublish,
       },
       officialOpenAccountOAuth: {
         enabled: config.openAccountOAuth.enabled,
@@ -117,6 +123,15 @@ export async function createRedNoteServer(
         includesTitleBodyTopics: true,
         includesAssetFileBytes: true,
         missingAssetBehavior: "fail_closed_without_inventing_bytes",
+      },
+      creatorBrowser: {
+        enabled: config.creatorBrowser.enabled,
+        toolNamesWhenEnabled: CREATOR_BROWSER_TOOL_NAMES,
+        visibleBrowser: true,
+        loginCompletedByUser: true,
+        profileDirectory: config.creatorBrowser.enabled ? config.creatorBrowser.profileDir : undefined,
+        publishClickAllowed: config.creatorBrowser.enabled && config.creatorBrowser.allowPublish,
+        warning: "此适配器依赖创作中心网页结构，可能随页面更新失效。浏览器 Profile 会在本机保存登录会话；MCP 不返回 Cookie。",
       },
     }),
   );
@@ -495,6 +510,15 @@ export async function createRedNoteServer(
       options.openAccountHttpClient ?? createOfficialOpenAccountFetchClient(config.openAccountOAuth.baseUrl),
     );
     registerOfficialOpenAccountOauthTools(server, adapter, store);
+  }
+
+  if (config.creatorBrowser.enabled) {
+    registerCreatorBrowserTools(
+      server,
+      options.creatorBrowserDriver ?? new PlaywrightCreatorDriver(config.creatorBrowser),
+      store,
+      config,
+    );
   }
 
   return server;

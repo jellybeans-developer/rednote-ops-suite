@@ -50,7 +50,9 @@ if (JSON.stringify(mcp).match(/Bearer |app_secret|sk_/i)) {
 }
 
 notes.push("Official openaccount OAuth stays disabled unless REDNOTE_OPENACCOUNT_OAUTH_ENABLED=true");
-notes.push("OAuth is not publish permission. Human publishes in the official client.");
+notes.push("OAuth is not publish permission. Human publishing remains the default.");
+notes.push("Visible creator-browser automation stays disabled unless REDNOTE_CREATOR_BROWSER_ENABLED=true");
+notes.push("Final publish click additionally requires REDNOTE_CREATOR_ALLOW_PUBLISH=true and an exact confirmation phrase");
 notes.push("Next: grok mcp add --scope project rednote_ops -- node dist/cli.js");
 notes.push("Then: grok mcp doctor rednote_ops");
 

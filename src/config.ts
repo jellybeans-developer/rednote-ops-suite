@@ -22,6 +22,16 @@ export interface AppConfig {
   port: number;
   httpToken?: string;
   openAccountOAuth: OpenAccountOAuthConfig;
+  creatorBrowser: CreatorBrowserConfig;
+}
+
+export interface CreatorBrowserConfig {
+  enabled: boolean;
+  allowPublish: boolean;
+  profileDir: string;
+  channel: "chrome" | "msedge";
+  loginUrl: string;
+  publishUrl: string;
 }
 
 function parseBoolean(value: string | undefined): boolean {
@@ -85,12 +95,31 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     throw new Error("REDNOTE_PORT must be an integer from 1 to 65535");
   }
 
+  const dataDir = resolve(env.REDNOTE_DATA_DIR || ".rednote-ops");
+  const creatorBrowserEnabled = parseBoolean(env.REDNOTE_CREATOR_BROWSER_ENABLED);
+  const creatorAllowPublish = parseBoolean(env.REDNOTE_CREATOR_ALLOW_PUBLISH);
+  if (creatorAllowPublish && !creatorBrowserEnabled) {
+    throw new Error("REDNOTE_CREATOR_ALLOW_PUBLISH requires REDNOTE_CREATOR_BROWSER_ENABLED=true");
+  }
+  const creatorChannel = env.REDNOTE_CREATOR_BROWSER_CHANNEL?.trim() || "chrome";
+  if (creatorChannel !== "chrome" && creatorChannel !== "msedge") {
+    throw new Error("REDNOTE_CREATOR_BROWSER_CHANNEL must be chrome or msedge");
+  }
+
   return {
-    dataDir: resolve(env.REDNOTE_DATA_DIR || ".rednote-ops"),
+    dataDir,
     readOnly: parseBoolean(env.REDNOTE_READ_ONLY),
     host,
     port,
     httpToken: token,
     openAccountOAuth: parseOpenAccountOAuth(env),
+    creatorBrowser: {
+      enabled: creatorBrowserEnabled,
+      allowPublish: creatorAllowPublish,
+      profileDir: resolve(env.REDNOTE_CREATOR_PROFILE_DIR || dataDir, "creator-browser-profile"),
+      channel: creatorChannel,
+      loginUrl: "https://creator.rednote.com/login?source=official",
+      publishUrl: "https://creator.rednote.com/publish/publish?source=official",
+    },
   };
 }

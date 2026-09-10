@@ -1,6 +1,6 @@
 # RedNote Ops Suite
 
-开发中：默认可做本地草稿运营与插件安装；官方 OAuth 默认关闭且不能发笔记。市场需维护者到 cursor.com/marketplace/publish 提交公开审核。确认短语不能验证真人身份。详见 [STATUS.md](STATUS.md)。
+开发中：0.4.0 新增默认关闭的创作中心模拟登录、自动填稿和可选发布点击。网页结构变化可能导致失效，尚未用真实账号完成发布测试。详见 [STATUS.md](STATUS.md)。
 
 一个安全优先的小红书运营工具包，包含可供 Grok Bot / Cursor 调用的 MCP 服务、Agent Plugins / Cursor 插件清单，以及市场文案。
 
@@ -19,6 +19,7 @@
 - GrokBot 角色指令、市场文案、隐私说明和上架清单
 - 仓库根目录的 `plugin.json` / `mcp.json` / `skills/`，便于作为 Cursor / Grok Bot 插件安装
 - GitHub Actions、Docker 部署、贡献指南、安全策略和测试
+- 可选的本机 Chrome/Edge 创作中心适配器：用户亲自登录，程序上传图片、填写内容，并可在独立开关启用后点击发布
 
 ## 快速开始
 
@@ -93,6 +94,20 @@ Bearer Token 适合单用户或可信团队的初始部署。公众多租户服�
 
 见 [`docs/use-with-grokbot.md`](docs/use-with-grokbot.md) 与 [`grokbot/PUBLISHING.md`](grokbot/PUBLISHING.md)。维护者向 Cursor / Grok Bot 市场提交的入口是 https://cursor.com/marketplace/publish（公开审核）。仓库中的 `manifest.json` 是可审计的项目清单，不宣称是 GrokBot 官方一键导入格式。
 
+## 实验性模拟登录与发布
+
+本功能只能在安装了 Chrome 或 Edge 的本机运行。用户必须在弹出的官方创作中心页面亲自扫码或完成验证。
+
+```text
+REDNOTE_CREATOR_BROWSER_ENABLED=true
+REDNOTE_CREATOR_BROWSER_CHANNEL=chrome
+REDNOTE_CREATOR_ALLOW_PUBLISH=false
+```
+
+重启 MCP 后依次调用：`start_creator_login` → 用户登录 → `creator_session_status` → 正常草稿审批流程 → `prepare_creator_publish`。确认自动填入内容无误后，如确实需要由工具点击最终发布按钮，再将 `REDNOTE_CREATOR_ALLOW_PUBLISH=true` 并重启 MCP，然后调用 `publish_creator_draft`。
+
+浏览器登录状态由 Chrome/Edge 自己保存在 `REDNOTE_DATA_DIR/creator-browser-profile`。不要把该目录提交到 Git。网页自动化没有使用反检测参数，也不会导出 Cookie。发布工具点击后不会擅自把本地草稿标为已发布；需要在创作中心确认成功，再调用 `record_publication`。
+
 ## 配置
 
 | 变量 | 默认值 | 说明 |
@@ -105,6 +120,10 @@ Bearer Token 适合单用户或可信团队的初始部署。公众多租户服�
 | `REDNOTE_OPENACCOUNT_OAUTH_ENABLED` | `false` | 显式设为 `true` 才注册官方 OAuth 工具 |
 | `REDNOTE_OPENACCOUNT_APP_ID` / `APP_SECRET` | 空 | 仅启用 OAuth 时必填；由使用者自己注册官方应用 |
 | `REDNOTE_OPENACCOUNT_BASE_URL` | 官方生产地址 | 只允许官方 openaccount 生产或 beta 主机 |
+| `REDNOTE_CREATOR_BROWSER_ENABLED` | `false` | 启用本机可见浏览器模拟登录与填稿 |
+| `REDNOTE_CREATOR_BROWSER_CHANNEL` | `chrome` | 使用 `chrome` 或 `msedge` |
+| `REDNOTE_CREATOR_PROFILE_DIR` | 数据目录下的 Profile | 浏览器保存登录会话的位置 |
+| `REDNOTE_CREATOR_ALLOW_PUBLISH` | `false` | 允许工具点击最终发布按钮的独立开关 |
 
 ## 当前限制
 

@@ -28,4 +28,13 @@ export const OFFICIAL_OPENACCOUNT_OAUTH_TOOL_NAMES = [
   DISCONNECT_OFFICIAL_OAUTH_TOOL_NAME,
 ] as const;
 
-export const PACKAGE_VERSION = "0.3.0";
+/** 仅在显式启用本机创作中心浏览器适配器时注册。 */
+export const CREATOR_BROWSER_TOOL_NAMES = [
+  "start_creator_login",
+  "creator_session_status",
+  "prepare_creator_publish",
+  "publish_creator_draft",
+  "close_creator_browser",
+] as const;
+
+export const PACKAGE_VERSION = "0.4.0";

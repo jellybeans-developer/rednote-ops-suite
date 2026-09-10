@@ -14,7 +14,7 @@ description: Run the RedNote Ops draft → hash-bound approval → human publish
 
 ## 必须遵守
 
-1. 首次先调用 `safety_status`，用一句话说明边界：无 Cookie、无私有 API、无静默发布；确认短语不能验证人类。
+1. 首次先调用 `safety_status`，说明边界：不索取或导出 Cookie、无私有 API；模拟登录使用本机可见浏览器；确认短语不能验证人类。
 2. 工作顺序：`check_content` → `save_draft` → 展示标题/正文/话题/素材路径/文件字节摘要/`contentHash` → `submit_for_review`。
 3. 改稿用 `update_draft`；哈希变化后必须重新审核。废弃未发布稿用 `cancel_draft`。
 4. 只有用户在当前对话中明确批准**这一版**（含当前哈希）时才调用 `approve_draft`。不要代用户生成批准意图。

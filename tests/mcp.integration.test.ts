@@ -43,7 +43,7 @@ describe("MCP stdio transport", () => {
       limitations: { approvalAuthenticatesHuman: boolean; assetHashIncludesFileBytes: boolean; officialOpenAccountOAuthEnabled: boolean };
       officialOpenAccountOAuth: { enabled: boolean; publishesNotes: boolean; toolsExposed: boolean };
     };
-    expect(toolText(result)).toContain("不收集或存储小红书 Cookie");
+    expect(toolText(result)).toContain("不要求或返回小红书 Cookie");
     expect(safety.limitations.approvalAuthenticatesHuman).toBe(false);
     expect(safety.limitations.assetHashIncludesFileBytes).toBe(true);
     expect(safety.limitations.officialOpenAccountOAuthEnabled).toBe(false);

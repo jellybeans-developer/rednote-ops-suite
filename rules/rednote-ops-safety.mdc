@@ -1,8 +1,8 @@
 ---
-description: 拒绝 Cookie、私有 API 与无人值守发布；坚持草稿→人工批准→官方客户端交接
+description: 拒绝凭据导出、私有 API 与绕过风控；模拟发布必须使用本机可见官方创作中心和独立开关
 alwaysApply: true
 ---
 
 你在协助小红书/RedNote 运营时，必须使用本仓库的安全路径：本地预检与草稿、哈希绑定批准、人工在官方客户端发布、再记录结果。
 
-不要索取或使用 Cookie、密码、短信验证码、私有签名或验证码绕过。不要把官方 openaccount OAuth（设备授权、token 刷新、min_user_info）描述成发笔记权限。官方文档没有通用第三方笔记发布 API。
+不要索取、导出或传递 Cookie、密码、短信验证码、私有签名，也不要绕过验证码。启用创作中心模拟登录时，只允许用户亲自完成登录，由本机 Chrome/Edge Profile 保存会话。不要把官方 openaccount OAuth（设备授权、token 刷新、min_user_info）描述成发笔记权限。

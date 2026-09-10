@@ -3,7 +3,7 @@
   "schemaNote": "This is a project-internal listing snapshot for version control, review, and manual copy-paste. It is not a verified or official GrokBot marketplace import format.",
   "name": "小红书安全运营助手",
   "shortName": "红薯运营助手",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "locale": "zh-CN",
   "category": "Productivity",
   "tagline": "从选题到复盘，带人工审核的安全小红书运营工作流",
@@ -41,6 +41,13 @@
       "poll_device_auth",
       "get_connected_profile",
       "disconnect_official_oauth"
+    ],
+    "optionalCreatorBrowserToolsWhenEnabled": [
+      "start_creator_login",
+      "creator_session_status",
+      "prepare_creator_publish",
+      "publish_creator_draft",
+      "close_creator_browser"
     ]
   },
   "dataPractices": {
@@ -50,13 +57,18 @@
     "storesMetrics": true,
     "usesUnofficialApis": false,
     "humanApprovalRequired": true,
+    "humanPublishRequiredByDefault": true,
+    "creatorBrowserSessionStoredLocallyWhenEnabled": true,
     "silentPublish": false
   },
   "disclosures": {
     "officialXiaohongshuProduct": false,
     "usesPrivateApi": false,
     "requestsCookiesPasswordsOrSms": false,
-    "humanPublishRequired": true,
+    "humanPublishRequiredByDefault": true,
+    "experimentalBrowserAutomationDisabledByDefault": true,
+    "browserPublishRequiresSeparateOptIn": true,
+    "browserPublishResultMustBeVerifiedByUser": true,
     "approvalPhraseAuthenticatesHuman": false,
     "marketplaceImportFormatVerified": false,
     "liveXiaohongshuConnection": false,

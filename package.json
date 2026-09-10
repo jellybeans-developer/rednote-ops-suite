@@ -1,6 +1,6 @@
 {
   "name": "rednote-ops-suite",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Safety-first MCP server and Grok Bot / Cursor plugin for Xiaohongshu/RedNote content operations.",
   "type": "module",
   "bin": {
@@ -45,10 +45,12 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
+    "playwright-core": "^1.63.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "archiver": "^8.0.0",
     "tsx": "^4.20.6",
     "typescript": "^7.0.2",
     "vitest": "^5.0.0"
