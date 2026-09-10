@@ -1,10 +1,10 @@
 # RedNote Ops Suite
 
-0.5.0 已加入 Grok 原生插件结构：一个 MCP 服务和一个 `rednote-operator` Agent。本机创作中心适配器已用国内账号验证登录、自动填稿及一次成功发布；网页结构变化仍可能导致失效。详见 [STATUS.md](STATUS.md)。
+0.5.1 提供一个 MCP 服务和一个 `rednote-operator` Agent，并在 Grok 插件中默认开启受控的最终发布能力。本机创作中心适配器已用国内账号验证登录、自动填稿及一次成功发布；网页结构变化仍可能导致失效。详见 [STATUS.md](STATUS.md)。
 
 一个安全优先的小红书运营工具包，包含可供 Grok / Cursor 调用的 MCP 服务、Grok Agent、插件清单与市场文案。
 
-> 本项目不是小红书官方产品，也未获小红书背书。它不提供私有 API 逆向、Cookie 导出、验证码或风控绕过、刷量。最终发布点击默认关闭；启用后仍在可见的官方创作中心执行，并要求逐稿哈希确认。官方 openaccount OAuth 只覆盖授权与基础资料，不是发笔记权限。
+> 本项目不是小红书官方产品，也未获小红书背书。它不提供私有 API 逆向、Cookie 导出、验证码或风控绕过、刷量。Grok 插件默认允许受控的最终发布点击，但仍只在可见的官方创作中心执行，并要求逐稿哈希与固定短语确认。官方 openaccount OAuth 只覆盖授权与基础资料，不是发笔记权限。
 
 ## 为什么这样设计
 
@@ -101,10 +101,10 @@ Bearer Token 适合单用户或可信团队的初始部署。公众多租户服�
 ```text
 REDNOTE_CREATOR_BROWSER_ENABLED=true
 REDNOTE_CREATOR_BROWSER_CHANNEL=chrome
-REDNOTE_CREATOR_ALLOW_PUBLISH=false
+REDNOTE_CREATOR_ALLOW_PUBLISH=true
 ```
 
-重启 MCP 后依次调用：`start_creator_login` → 用户登录 → `creator_session_status` → 正常草稿审批流程 → `prepare_creator_publish`。确认自动填入内容无误后，如确实需要由工具点击最终发布按钮，再将 `REDNOTE_CREATOR_ALLOW_PUBLISH=true` 并重启 MCP，然后调用 `publish_creator_draft`。
+重启 MCP 后依次调用：`start_creator_login` → 用户登录 → `creator_session_status` → 正常草稿审批流程 → `prepare_creator_publish`。Grok 插件已默认允许最终发布工具；用户明确要求发布且当前哈希一致时，再调用 `publish_creator_draft`。如只希望自动填稿，将 `REDNOTE_CREATOR_ALLOW_PUBLISH=false` 后重启 MCP。
 
 浏览器登录状态由 Chrome/Edge 自己保存在 `REDNOTE_DATA_DIR/creator-browser-profile`。不要把该目录提交到 Git。网页自动化没有使用反检测参数，也不会导出 Cookie。发布工具点击后不会擅自把本地草稿标为已发布；只有创作中心返回成功并取得公开笔记 ID 后，才调用 `record_publication`。平台可能随后审核拒绝，因此仍需检查内容管理状态。
 
@@ -123,7 +123,7 @@ REDNOTE_CREATOR_ALLOW_PUBLISH=false
 | `REDNOTE_CREATOR_BROWSER_ENABLED` | `false` | 启用本机可见浏览器模拟登录与填稿 |
 | `REDNOTE_CREATOR_BROWSER_CHANNEL` | `chrome` | 使用 `chrome` 或 `msedge` |
 | `REDNOTE_CREATOR_PROFILE_DIR` | 数据目录下的 Profile | 浏览器保存登录会话的位置 |
-| `REDNOTE_CREATOR_ALLOW_PUBLISH` | `false` | 允许工具点击最终发布按钮的独立开关 |
+| `REDNOTE_CREATOR_ALLOW_PUBLISH` | MCP 核心默认 `false`；Grok 插件默认 `true` | 允许工具点击最终发布按钮的独立开关 |
 
 ## 当前限制
 

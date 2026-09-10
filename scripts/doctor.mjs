@@ -56,9 +56,9 @@ if (JSON.stringify({ mcp, grokMcp }).match(/Bearer |app_secret|sk_/i)) {
 }
 
 notes.push("Official openaccount OAuth stays disabled unless REDNOTE_OPENACCOUNT_OAUTH_ENABLED=true");
-notes.push("OAuth is not publish permission. Human publishing remains the default.");
-notes.push("Visible creator-browser automation stays disabled unless REDNOTE_CREATOR_BROWSER_ENABLED=true");
-notes.push("Final publish click additionally requires REDNOTE_CREATOR_ALLOW_PUBLISH=true and an exact confirmation phrase");
+notes.push("OAuth is not publish permission. The Grok plugin uses the visible Creator Center browser instead.");
+notes.push("The Grok plugin enables visible creator-browser automation and the final-click capability by default");
+notes.push("Every final click still requires the current content hash, explicit user intent, and the exact confirmation phrase");
 notes.push("Install: grok plugin install jellybeans-developer/rednote-ops-suite --trust");
 notes.push("Validate (when Grok CLI is installed): grok plugin validate .");
 notes.push("Run directly: grok --agent-profile agents/rednote-operator.md");

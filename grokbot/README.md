@@ -8,6 +8,6 @@
 
 Bot 依赖本仓库构建后的 `rednote-ops` MCP（`node dist/cli.js`）。建议先使用本地 stdio；公开上架时部署 HTTPS MCP，并用环境变量传递至少 32 位 Bearer Token。插件文件里不要放密钥。
 
-任何用户都必须使用自己的小红书账号与获批的官方能力。Bot 不索取 Cookie、密码、短信验证码，也不提供逆向接口。最终发布必须由人完成。可选的官方 openaccount OAuth 脚手架默认关闭，启用后也只做设备授权与 `min_user_info`，**不能发笔记**。
+任何用户都必须使用自己的小红书账号。Bot 不索取 Cookie、密码、短信验证码，也不提供逆向接口。Grok 插件默认允许在可见的官方创作中心执行受控发布，但每条发布仍需要用户明确要求、当前内容哈希和固定确认短语；平台验证必须由用户完成。可选的官方 openaccount OAuth 脚手架默认关闭，启用后也只做设备授权与 `min_user_info`，**不能发笔记**。
 
 能力与限制以仓库根目录的 [`STATUS.md`](../STATUS.md) 和 [`docs/use-with-grokbot.md`](../docs/use-with-grokbot.md) 为准。

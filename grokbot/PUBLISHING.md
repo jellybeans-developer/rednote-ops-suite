@@ -2,7 +2,7 @@
 
 本目录是**可复制的上架草稿**，用于对照 MCP 真实能力填写创建页。`manifest.json` 的 schema 为项目内部清单（`rednote-ops.grokbot-listing/v1`），**不是**已核实的 GrokBot 官方一键导入格式。公开文档描述的是在产品里创建 Bot、编辑资料和连接 MCP；不要发明官方 listing 导入规范。
 
-当前清单版本：`0.5.0`（Grok 原生 Agent、MCP、13 个核心工具、默认关闭的官方 OAuth，以及最终点击默认关闭的可见浏览器工具）。
+当前清单版本：`0.5.1`（Grok 原生 Agent、MCP、13 个核心工具、默认关闭的官方 OAuth，以及受控发布默认开启的可见浏览器工具）。
 
 ## 维护者下一步（真实市场路径）
 
@@ -20,7 +20,7 @@
 2. 默认运行（OAuth 关闭）时工具恰好 13 个，且与 `manifest.json` 的 `requiredTools` 一致。
 3. 部署远程 MCP 时使用 HTTPS 与 Bearer Token / 标准 OAuth；不要把 Cookie、密码或短信验证码交给 Bot。Token 只放环境变量。
 4. 用 `npm run doctor` 与 Grok 的 MCP 诊断确认本地 `node dist/cli.js` 可连接。
-5. 提交市场审核时披露：非小红书官方产品、不使用私有 API、最终点击默认关闭、平台验证不能绕过、批准短语不能验证人类、OAuth ≠ 发布权限。
+5. 提交市场审核时披露：非小红书官方产品、不使用私有 API、Grok 插件默认开启受控发布、平台验证不能绕过、批准短语不能验证人类、OAuth ≠ 发布权限。
 6. 使用全新测试账号完成建议审核测试。
 
 ## 建议审核测试

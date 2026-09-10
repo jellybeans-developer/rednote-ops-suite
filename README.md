@@ -1,10 +1,10 @@
 # RedNote Ops Suite
 
-Version 0.5.0 ships a native Grok Build plugin: one MCP server plus the `rednote-operator` agent. The optional local Creator Center adapter has been validated with a real domestic account for login, form filling, and a successful publish. See [STATUS.md](STATUS.md).
+Version 0.5.1 ships a native Grok Build plugin: one MCP server plus the `rednote-operator` agent. Its visible Creator Center flow enables the guarded final publish action by default, while still requiring an exact per-draft confirmation. See [STATUS.md](STATUS.md).
 
 Safety-first Xiaohongshu/RedNote operations for Grok and Cursor: an open-source MCP server, a native Grok Agent, and portable plugin manifests.
 
-This is not an official Xiaohongshu product. It does not request cookies, passwords, SMS codes, or private API signatures, and it never bypasses QR, CAPTCHA, device confirmation, rate limits, or platform risk controls. AI prepares and checks work; final browser publishing is separately gated, hash-bound, visible, and disabled by default. Official openaccount OAuth is profile/login scaffolding only — not publish permission.
+This is not an official Xiaohongshu product. It does not request cookies, passwords, SMS codes, or private API signatures, and it never bypasses QR, CAPTCHA, device confirmation, rate limits, or platform risk controls. AI prepares and checks work; Grok plugin publishing is enabled by default but remains separately gated, hash-bound, visible, and confirmation-based. Official openaccount OAuth is profile/login scaffolding only — not publish permission.
 
 ## Quick start
 

@@ -1,6 +1,6 @@
 {
   "name": "rednote-ops-suite",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Safety-first Xiaohongshu/RedNote ops plugin: local MCP drafts, hash-bound approval, and an optional visible Creator Center publishing flow.",
   "author": {
     "name": "RedNote Ops Suite contributors"

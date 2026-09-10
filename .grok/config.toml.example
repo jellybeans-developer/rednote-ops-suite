@@ -1,6 +1,6 @@
 [mcp_servers.rednote_ops]
 command = "node"
 args = ["dist/cli.js"]
-env = { REDNOTE_DATA_DIR = ".rednote-ops", REDNOTE_CREATOR_BROWSER_ENABLED = "true", REDNOTE_CREATOR_BROWSER_REGION = "cn", REDNOTE_CREATOR_ALLOW_PUBLISH = "false" }
+env = { REDNOTE_DATA_DIR = ".rednote-ops", REDNOTE_CREATOR_BROWSER_ENABLED = "true", REDNOTE_CREATOR_BROWSER_REGION = "cn", REDNOTE_CREATOR_ALLOW_PUBLISH = "true" }
 startup_timeout_sec = 30
 tool_timeout_sec = 120

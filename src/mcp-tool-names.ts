@@ -37,4 +37,4 @@ export const CREATOR_BROWSER_TOOL_NAMES = [
   "close_creator_browser",
 ] as const;
 
-export const PACKAGE_VERSION = "0.5.0";
+export const PACKAGE_VERSION = "0.5.1";

@@ -1,6 +1,6 @@
 # 在 Grok 中使用 RedNote Ops Suite
 
-版本 0.5.0 同时提供一个 MCP 服务和一个 Grok Agent。Grok Build 可直接从 GitHub 安装，不需要下载或提交 ZIP。
+版本 0.5.1 同时提供一个 MCP 服务和一个 Grok Agent。Grok Build 可直接从 GitHub 安装，不需要下载或提交 ZIP。
 
 本项目不是小红书官方产品。它只使用本地数据与可见的官方创作中心页面，不调用私有 API，不导出 Cookie，也不绕过二维码、验证码、设备确认、频率限制或平台风控。
 
@@ -33,9 +33,9 @@ grok --agent-profile agents/rednote-operator.md
 
 ## 3. 默认安全状态
 
-Grok 原生插件默认启用可见浏览器能力，但 `REDNOTE_CREATOR_ALLOW_PUBLISH=false`，因此可以登录、检查会话和填稿，不能点击最终发布。登录由用户在官方页面完成，浏览器状态保存在 Grok 插件数据目录，不会进入 Git。
+Grok 原生插件默认启用可见浏览器与受控发布能力，即 `REDNOTE_CREATOR_ALLOW_PUBLISH=true`。登录由用户在官方页面完成，浏览器状态保存在 Grok 插件数据目录，不会进入 Git。默认开启只代表 Agent 可以调用最终发布工具，不会取消逐稿批准、哈希匹配或固定确认短语。
 
-如果只需要草稿工作流，可将 `REDNOTE_CREATOR_BROWSER_ENABLED` 设为 `false`。如果明确需要最终点击，将 `REDNOTE_CREATOR_ALLOW_PUBLISH` 设为 `true` 后重启 MCP。每条内容仍需最新 `contentHash` 和固定确认短语 `PUBLISH_TO_XIAOHONGSHU`。
+如果只需要草稿工作流，可将 `REDNOTE_CREATOR_BROWSER_ENABLED` 设为 `false`；如果只需要自动填稿，可将 `REDNOTE_CREATOR_ALLOW_PUBLISH` 设为 `false`。每条发布仍需最新 `contentHash`、用户在当前会话中的明确发布要求，以及固定确认短语 `PUBLISH_TO_XIAOHONGSHU`。
 
 ## 4. 推荐工作流
 
@@ -70,7 +70,7 @@ Grok.com 的自定义 MCP 连接器需要一个公网可访问的 HTTP MCP 地�
 
 ## English quick guide
 
-RedNote Ops Suite 0.5.0 contains one MCP server and one native Grok Agent. Install it directly from GitHub:
+RedNote Ops Suite 0.5.1 contains one MCP server and one native Grok Agent. Install it directly from GitHub:
 
 ```bash
 npm ci
@@ -79,4 +79,4 @@ grok plugin install jellybeans-developer/rednote-ops-suite --trust
 grok --agent-profile agents/rednote-operator.md
 ```
 
-The plugin loads `.mcp.json`, `agents/rednote-operator.md`, and the bundled skills. Visible Creator Center automation is available, but the final click is disabled by default and requires both `REDNOTE_CREATOR_ALLOW_PUBLISH=true` and an exact per-draft confirmation. Never bypass QR, CAPTCHA, device checks, rate limits, or risk controls. A click, platform acceptance, and final content approval are distinct states.
+The plugin loads `.mcp.json`, `agents/rednote-operator.md`, and the bundled skills. Visible Creator Center publishing is enabled by default, but every final click still requires an exact per-draft content hash, explicit user intent, and confirmation phrase. Never bypass QR, CAPTCHA, device checks, rate limits, or risk controls. A click, platform acceptance, and final content approval are distinct states.

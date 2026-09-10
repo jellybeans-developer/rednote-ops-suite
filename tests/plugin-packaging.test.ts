@@ -46,7 +46,7 @@ describe("plugin packaging", () => {
     expect(grokServers.rednote_ops.args).toEqual(["plugin-dist/index.js"]);
     expect(grokServers.rednote_ops.cwd).toBe("${GROK_PLUGIN_ROOT}");
     expect(grokServers.rednote_ops.env.REDNOTE_CREATOR_BROWSER_ENABLED).toBe("true");
-    expect(grokServers.rednote_ops.env.REDNOTE_CREATOR_ALLOW_PUBLISH).toBe("false");
+    expect(grokServers.rednote_ops.env.REDNOTE_CREATOR_ALLOW_PUBLISH).toBe("true");
     expect(JSON.stringify(grokMcp)).not.toMatch(/Bearer |app_secret|sk_/i);
 
     const requiredTools = (listing.mcp as { requiredTools: string[] }).requiredTools;

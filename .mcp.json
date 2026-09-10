@@ -9,7 +9,7 @@
         "REDNOTE_DATA_DIR": "${GROK_PLUGIN_DATA}/rednote-ops",
         "REDNOTE_CREATOR_BROWSER_ENABLED": "true",
         "REDNOTE_CREATOR_BROWSER_REGION": "cn",
-        "REDNOTE_CREATOR_ALLOW_PUBLISH": "false"
+        "REDNOTE_CREATOR_ALLOW_PUBLISH": "true"
       }
     }
   }

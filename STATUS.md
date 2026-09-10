@@ -2,13 +2,13 @@
 
 Honest product truth: official Xiaohongshu **openaccount** docs expose OAuth, device grant for web, token refresh, and basic profile (`min_user_info`). They do **not** document a general third-party note-publishing API. This project therefore uses a visible local Creator Center browser for its optional publishing path, with a hash-bound approval and a separate final-click gate.
 
-## Shippable now (0.5.0)
+## Shippable now (0.5.1)
 
 - Local MCP draft workflow (13 core tools): check, save, get, update, cancel, review, hash-bound approval, publish-package handoff, local publication/metric records. `contentHash` includes asset file bytes and fails closed on missing files.
 - Native Grok Build plugin layout: `.grok-plugin/plugin.json`, `.grok-plugin/marketplace.json`, `.mcp.json`, `agents/rednote-operator.md`, and operator `skills/`. The existing Agent Plugins / Cursor manifests remain available. Secrets stay out of plugin files.
 - Operator docs: [docs/use-with-grokbot.md](docs/use-with-grokbot.md) (Chinese + English), `npm run doctor`, and [docs/RELEASE.md](docs/RELEASE.md). No ZIP is generated or stored.
 - Optional official openaccount OAuth **scaffold**, disabled by default. When explicitly enabled with `app_id` / `app_secret`, MCP exposes `start_device_auth`, `poll_device_auth`, `get_connected_profile`, `disconnect_official_oauth`. Tokens are never returned in tool results. This is **not** publish capability.
-- Creator Center browser adapter: visible Chrome/Edge, user-completed login, image upload, title/body/topic fill, and a separately gated publish-button click. It has been live-tested with a domestic account through a successful platform acceptance. The browser keeps its session in a local profile; MCP does not export cookies.
+- Creator Center browser adapter: visible Chrome/Edge, user-completed login, image upload, title/body/topic fill, and a separately gated publish-button click. The Grok plugin enables the final-click capability by default, while the generic MCP core remains default-off. Every publish still requires the current content hash and exact confirmation phrase. It has been live-tested with a domestic account through a successful platform acceptance.
 - CI via `npm run check`. Listing copy lives in `grokbot/` for manual paste.
 
 ## Still blocked / external

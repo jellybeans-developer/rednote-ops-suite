@@ -1,6 +1,6 @@
 {
   "name": "rednote-ops-suite",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Safety-first MCP server and Grok Agent plugin for Xiaohongshu/RedNote content operations.",
   "type": "module",
   "bin": {

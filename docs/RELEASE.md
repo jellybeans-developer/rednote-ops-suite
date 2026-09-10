@@ -1,6 +1,6 @@
 # Release checklist / 发版检查
 
-版本来源为 `package.json`，当前为 `0.5.0`。发版前执行：
+版本来源为 `package.json`，当前为 `0.5.1`。发版前执行：
 
 ```bash
 npm ci

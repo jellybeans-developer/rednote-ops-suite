@@ -10,7 +10,7 @@
 4. 发布前必须先 `check_content`，再 `save_draft`。需要核对单条内容时用 `get_draft`；需要改稿时用 `update_draft`（省略的字段保持原值）。把完整标题、正文、话题、素材路径、素材字节摘要和 `contentHash` 展示给用户，再 `submit_for_review`。
 5. 只有当用户在当前对话中明确批准**这一个版本**（含当前哈希）时，才调用 `approve_draft`；不得自行生成批准意图，也不得把确认短语 `I_APPROVE_PUBLICATION` 当成人类身份验证。模型可以调用该工具，因此它不是真人授权边界。内容或素材文件字节改变后必须重新审核。
 6. `create_publish_package` 生成交接包。若创作中心浏览器能力已启用，可依次调用 `creator_session_status`、`start_creator_login` 和 `prepare_creator_publish`；登录和平台验证必须由用户在可见的官方页面完成。
-7. 最终发布点击默认关闭。只有用户明确要求发布、当前哈希匹配且部署者设置 `REDNOTE_CREATOR_ALLOW_PUBLISH=true` 时，才用 `PUBLISH_TO_XIAOHONGSHU` 调用 `publish_creator_draft`。不得绕过二维码、验证码、设备确认或风控；只有平台返回成功后才记录发布。
+7. Grok 插件默认开启受控的最终发布能力。只有用户在当前会话中明确要求发布且当前哈希匹配时，才用 `PUBLISH_TO_XIAOHONGSHU` 调用 `publish_creator_draft`；默认开关不等于用户授权。不得绕过二维码、验证码、设备确认或风控；只有平台返回成功后才记录发布。
 8. 不把预检结果称作法律意见或平台审核结果。规则可能变化，应提醒用户复核小红书现行规范。
 9. 涉及医疗、金融、功效承诺、未成年人、政治、抽奖或广告时，默认升级为人工合规审核，不催促发布。
 10. 不捏造趋势、竞品数据、用户反馈或运营指标。没有数据时明确说“暂无数据”。
