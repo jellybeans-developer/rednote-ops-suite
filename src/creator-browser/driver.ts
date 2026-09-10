@@ -3,7 +3,7 @@ import { extname } from "node:path";
 import type { BrowserContext, Page } from "playwright-core";
 import type { CreatorBrowserConfig } from "../config.js";
 
-const OFFICIAL_CREATOR_HOST = "creator.rednote.com";
+const OFFICIAL_CREATOR_HOSTS = new Set(["creator.rednote.com", "creator.xiaohongshu.com"]);
 
 export interface CreatorSessionStatus {
   browserOpen: boolean;
@@ -29,7 +29,7 @@ export interface CreatorPrepareResult {
 export interface CreatorPublishResult {
   clicked: true;
   currentUrl: string;
-  platformResultVerified: false;
+  platformResultVerified: boolean;
 }
 
 export interface CreatorBrowserDriver {
@@ -42,10 +42,14 @@ export interface CreatorBrowserDriver {
 
 export function assertOfficialCreatorUrl(rawUrl: string): URL {
   const url = new URL(rawUrl);
-  if (url.protocol !== "https:" || url.hostname !== OFFICIAL_CREATOR_HOST) {
+  if (url.protocol !== "https:" || !OFFICIAL_CREATOR_HOSTS.has(url.hostname)) {
     throw new Error(`Creator browser refused non-official URL: ${url.origin}`);
   }
   return url;
+}
+
+export function isCreatorPublishSuccessUrl(rawUrl: string): boolean {
+  return assertOfficialCreatorUrl(rawUrl).pathname.includes("/publish/success");
 }
 
 async function fillFirstVisible(page: Page, selectors: string[], value: string, field: string): Promise<void> {
@@ -87,6 +91,7 @@ export class PlaywrightCreatorDriver implements CreatorBrowserDriver {
     const page = await this.ensurePage();
     await page.goto(this.config.publishUrl, { waitUntil: "domcontentloaded" });
     await page.bringToFront();
+    await page.waitForTimeout(5000);
     if ((await this.readStatus(page)).requiresUserLogin) {
       throw new Error("创作中心登录已失效。请先调用 start_creator_login，并在可见浏览器中亲自扫码登录。没有点击发布。");
     }
@@ -96,9 +101,19 @@ export class PlaywrightCreatorDriver implements CreatorBrowserDriver {
       throw new Error(`当前模拟发布只支持图片素材：${unsupported.join(", ")}`);
     }
     if (input.assetPaths.length) {
-      const upload = page.locator('input[type="file"]').first();
+      let upload = page.locator('input[type="file"][accept*=".jpg"], input[type="file"][accept*="image"]').first();
+      if (!await upload.count()) {
+        const imageTab = page.locator('.creator-tab:not([aria-hidden="true"])').filter({ hasText: "上传图文" }).last();
+        await imageTab.waitFor({ state: "visible", timeout: 10_000 }).catch(() => {
+          throw new Error("找不到创作中心正常可见的“上传图文”标签。没有点击发布。");
+        });
+        await imageTab.click();
+        await page.waitForTimeout(1000);
+        upload = page.locator('input[type="file"][accept*=".jpg"], input[type="file"][accept*="image"]').first();
+      }
       if (!await upload.count()) throw new Error("找不到创作中心的图片上传控件；网页结构可能已经更新。没有点击发布。");
       await upload.setInputFiles(input.assetPaths);
+      await page.waitForTimeout(2000);
     }
 
     await fillFirstVisible(page, [
@@ -121,14 +136,48 @@ export class PlaywrightCreatorDriver implements CreatorBrowserDriver {
     const page = await this.ensurePage();
     const url = assertOfficialCreatorUrl(page.url());
     if (!url.pathname.includes("publish")) throw new Error("当前不在官方发布页面，拒绝点击。请先调用 prepare_creator_publish。");
-    const button = page.getByRole("button", { name: /^(发布|立即发布)$/ }).first();
-    if (!await button.isVisible().catch(() => false)) {
+    await page.locator(".publish-page").evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+    }).catch(() => undefined);
+    await page.waitForTimeout(500);
+    const publishHost = page.locator('xhs-publish-btn[is-publish="true"]').first();
+    if (await publishHost.count()) {
+      await publishHost.scrollIntoViewIfNeeded();
+    }
+
+    // The domestic Creator Center renders the submit controls inside an open
+    // shadow root. Playwright's CSS/role locators pierce open shadow roots.
+    const shadowButton = publishHost.getByRole("button", { name: /^(发布|立即发布)$/ }).first();
+    const regularButton = page.getByRole("button", { name: /^(发布|立即发布)$/ }).first();
+    const button = await shadowButton.isVisible().catch(() => false)
+      ? shadowButton
+      : await regularButton.isVisible().catch(() => false)
+        ? regularButton
+        : undefined;
+    if (button) {
+      if (!await button.isEnabled()) throw new Error("发布按钮当前不可用，请在可见浏览器中检查表单提示。");
+      await button.click();
+    } else if (await publishHost.isVisible().catch(() => false)) {
+      // Some Creator Center builds use a closed shadow root. In that case the
+      // verified host contains “暂存离开” on the left and “发布” on the right.
+      if (await publishHost.getAttribute("submit-disabled") !== "false") {
+        throw new Error("发布按钮当前不可用，请在可见浏览器中检查表单提示。");
+      }
+      const box = await publishHost.boundingBox();
+      if (!box || box.width < 160 || box.height < 32 || box.height > 120) {
+        throw new Error("发布组件尺寸异常；网页结构可能已经更新。没有点击任何按钮。");
+      }
+      const submitCenterX = box.width * 0.5 + Math.min(80, box.width * 0.25);
+      await publishHost.click({ position: { x: submitCenterX, y: box.height * 0.5 } });
+    } else {
       throw new Error("找不到明确标记为“发布”或“立即发布”的按钮；网页结构可能已经更新。没有点击任何按钮。");
     }
-    if (!await button.isEnabled()) throw new Error("发布按钮当前不可用，请在可见浏览器中检查表单提示。");
-    await button.click();
-    await page.waitForTimeout(1500);
-    return { clicked: true, currentUrl: page.url(), platformResultVerified: false };
+    await page.waitForURL((candidate) => candidate.pathname.includes("/publish/success"), {
+      timeout: 10_000,
+    }).catch(() => undefined);
+    const currentUrl = page.url();
+    const platformResultVerified = isCreatorPublishSuccessUrl(currentUrl);
+    return { clicked: true, currentUrl, platformResultVerified };
   }
 
   async close(): Promise<void> {

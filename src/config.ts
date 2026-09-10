@@ -28,6 +28,7 @@ export interface AppConfig {
 export interface CreatorBrowserConfig {
   enabled: boolean;
   allowPublish: boolean;
+  region: "cn" | "global";
   profileDir: string;
   channel: "chrome" | "msedge";
   loginUrl: string;
@@ -105,6 +106,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (creatorChannel !== "chrome" && creatorChannel !== "msedge") {
     throw new Error("REDNOTE_CREATOR_BROWSER_CHANNEL must be chrome or msedge");
   }
+  const creatorRegion = env.REDNOTE_CREATOR_BROWSER_REGION?.trim() || "global";
+  if (creatorRegion !== "cn" && creatorRegion !== "global") {
+    throw new Error("REDNOTE_CREATOR_BROWSER_REGION must be cn or global");
+  }
+  const creatorOrigin = creatorRegion === "cn" ? "https://creator.xiaohongshu.com" : "https://creator.rednote.com";
 
   return {
     dataDir,
@@ -116,10 +122,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     creatorBrowser: {
       enabled: creatorBrowserEnabled,
       allowPublish: creatorAllowPublish,
-      profileDir: resolve(env.REDNOTE_CREATOR_PROFILE_DIR || dataDir, "creator-browser-profile"),
+      region: creatorRegion,
+      profileDir: env.REDNOTE_CREATOR_PROFILE_DIR
+        ? resolve(env.REDNOTE_CREATOR_PROFILE_DIR)
+        : resolve(dataDir, "creator-browser-profile"),
       channel: creatorChannel,
-      loginUrl: "https://creator.rednote.com/login?source=official",
-      publishUrl: "https://creator.rednote.com/publish/publish?source=official",
+      loginUrl: `${creatorOrigin}/login?source=official`,
+      publishUrl: `${creatorOrigin}/publish/publish?source=official`,
     },
   };
 }

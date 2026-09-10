@@ -65,7 +65,7 @@ export function registerCreatorBrowserTools(
 
   server.registerTool("publish_creator_draft", {
     title: "点击创作中心发布按钮",
-    description: "高风险操作：在官方创作中心点击明确的发布按钮。仅在 REDNOTE_CREATOR_ALLOW_PUBLISH=true、草稿已准备、哈希匹配且提供固定确认短语时执行。平台是否最终发布成功仍需人工核对。",
+    description: "高风险操作：在官方创作中心点击明确的发布按钮。仅在 REDNOTE_CREATOR_ALLOW_PUBLISH=true、草稿已准备、哈希匹配且提供固定确认短语时执行。若官方页面跳转到 /publish/success，会返回已验证成功；遇到扫码等安全验证时保持未验证状态。",
     inputSchema: {
       draftId: z.uuid(),
       expectedContentHash: z.string().length(64),
@@ -82,7 +82,14 @@ export function registerCreatorBrowserTools(
       if (draft.contentHash !== expectedContentHash) throw new Error("Content hash mismatch; publication denied");
       const submitted = await driver.clickPublish();
       await store.audit("creator.publish.click", "success", draftId, { contentHash: draft.contentHash, currentUrl: submitted.currentUrl });
-      return result({ ...submitted, draftId, status: "publish_clicked_result_unverified", next: "请在可见浏览器和笔记管理中确认结果；确认成功后调用 record_publication。" });
+      return result({
+        ...submitted,
+        draftId,
+        status: submitted.platformResultVerified ? "publish_succeeded" : "publish_clicked_result_unverified",
+        next: submitted.platformResultVerified
+          ? "官方创作中心已进入发布成功页。取得公开笔记 ID 后调用 record_publication 更新本地台账。"
+          : "平台可能正在等待扫码或其他安全验证。请在可见浏览器中完成验证，再检查笔记管理。",
+      });
     } catch (error) {
       await store.audit("creator.publish.click", "denied", draftId, { message: (error as Error).message });
       return result({ error: (error as Error).message }, true);

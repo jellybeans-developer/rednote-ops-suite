@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { resolve } from "node:path";
 import { loadConfig } from "../src/config.js";
 
 describe("configuration", () => {
@@ -7,6 +8,12 @@ describe("configuration", () => {
     expect(config.creatorBrowser.enabled).toBe(false);
     expect(config.creatorBrowser.allowPublish).toBe(false);
     expect(config.creatorBrowser.loginUrl).toBe("https://creator.rednote.com/login?source=official");
+  });
+
+  it("uses an explicit creator browser profile directory without appending another directory", () => {
+    const profileDir = resolve(".rednote-test-profile");
+    const config = loadConfig({ REDNOTE_CREATOR_PROFILE_DIR: profileDir } as NodeJS.ProcessEnv);
+    expect(config.creatorBrowser.profileDir).toBe(profileDir);
   });
 
   it("requires creator browser before publish clicking and validates the channel", () => {
